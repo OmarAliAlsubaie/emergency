@@ -1,0 +1,488 @@
+import '../../models/category.dart';
+import '../../models/scenario.dart';
+import '../../models/badge.dart';
+import '../../models/knowledge_article.dart';
+import '../../models/emergency_contact.dart';
+import '../../models/user_profile.dart';
+import 'seed/scenarios_fire.dart';
+import 'seed/scenarios_flood.dart';
+import 'seed/scenarios_heat.dart';
+import 'seed/scenarios_traffic.dart';
+import 'seed/scenarios_home.dart';
+import 'seed/scenarios_evacuation.dart';
+import 'seed/scenarios_electric.dart';
+import 'seed/scenarios_emergency_kit.dart';
+import 'seed/scenarios_desert.dart';
+import 'seed/scenarios_cyber.dart';
+
+class InitialSeedData {
+  // 1. Initial Categories (10 Categories)
+  static List<SimulationCategory> get categories => [
+        const SimulationCategory(
+          id: 'fire',
+          titleAr: 'الحرائق والإطفاء',
+          titleEn: 'Fire & Extinguishment',
+          descriptionAr: 'التصرف السليم أثناء اندلاع الحرائق واستخدام أدوات الإطفاء والإخلاء',
+          descriptionEn: 'Proper actions during fire outbreaks and using firefighting tools',
+          icon: 'local_fire_department',
+          colorHex: 0xFFE64A19,
+        ),
+        const SimulationCategory(
+          id: 'flood',
+          titleAr: 'السيول والأمطار الغزيرة',
+          titleEn: 'Floods & Torrential Rains',
+          descriptionAr: 'إجراءات السلامة أثناء جريان الأودية والأنفاق وتجمع المياه',
+          descriptionEn: 'Safety procedures during flash floods and heavy rainfalls',
+          icon: 'water',
+          colorHex: 0xFF0288D1,
+        ),
+        const SimulationCategory(
+          id: 'heat',
+          titleAr: 'الحرارة الشديدة وضربات الشمس',
+          titleEn: 'Extreme Heat & Sunstroke',
+          descriptionAr: 'التعامل مع الإنهاك الحراري والوقاية أثناء الموجات الحارة صيفاً',
+          descriptionEn: 'Handling heat exhaustion and sunstrokes during peak summer',
+          icon: 'wb_sunny',
+          colorHex: 0xFFF57C00,
+        ),
+        const SimulationCategory(
+          id: 'traffic',
+          titleAr: 'حوادث الطرق والسلامة المرورية',
+          titleEn: 'Road Accidents & Traffic Safety',
+          descriptionAr: 'الاستجابة الأولى للحوادث على الطرق السريعة وتأمين الموقع',
+          descriptionEn: 'First response to highway accidents and site securing',
+          icon: 'directions_car',
+          colorHex: 0xFF5E35B1,
+        ),
+        const SimulationCategory(
+          id: 'home',
+          titleAr: 'السلامة المنزلية والغاز',
+          titleEn: 'Home & Gas Safety',
+          descriptionAr: 'تسرب الغاز، حرائق المطبخ، والتسمم بالمنظفات داخل المنزل',
+          descriptionEn: 'Gas leaks, kitchen fires, and household chemical hazards',
+          icon: 'home',
+          colorHex: 0xFF43A047,
+        ),
+        const SimulationCategory(
+          id: 'evacuation',
+          titleAr: 'الإخلاء والتدافع في المنشآت',
+          titleEn: 'Evacuation & Crowd Safety',
+          descriptionAr: 'إدارة الهروب الآمن والتعامل مع التدافع والفعاليات الكبرى',
+          descriptionEn: 'Safe crowd evacuation and emergency exit procedures',
+          icon: 'corporate_fare',
+          colorHex: 0xFFD81B60,
+        ),
+        const SimulationCategory(
+          id: 'electric',
+          titleAr: 'المخاطر والصدمات الكهربائية',
+          titleEn: 'Electrical Hazards & Shocks',
+          descriptionAr: 'التعامل مع الماس الكهربائي، الصعق، والوقاية من أحمال التماس',
+          descriptionEn: 'Handling electrical short circuits, shocks, and overloaded plugs',
+          icon: 'bolt',
+          colorHex: 0xFFFBC02D,
+        ),
+        const SimulationCategory(
+          id: 'emergency_kit',
+          titleAr: 'الاستعداد للطوارئ وحقيبة الإسعاف',
+          titleEn: 'Emergency Readiness & First Aid',
+          descriptionAr: 'تجهيز خطة الطوارئ الأسرية وحقيبة الإمدادات والإسعافات الأولية',
+          descriptionEn: 'Family emergency planning, survival kit, and basic first aid',
+          icon: 'medical_services',
+          colorHex: 0xFF00897B,
+        ),
+        const SimulationCategory(
+          id: 'desert_safety',
+          titleAr: 'سلامة الكشتات والرحلات البرية',
+          titleEn: 'Saudi Desert & Trip Safety',
+          descriptionAr: 'التعامل مع السيول المنقولة بالأودية، الانغراز بالرمال، والنجاة بالصحراء',
+          descriptionEn: 'Flash flood wadi safety, desert sand stuck recovery, and wilderness survival',
+          icon: 'landscape',
+          colorHex: 0xFFD97706,
+        ),
+        const SimulationCategory(
+          id: 'cyber_safety',
+          titleAr: 'أمن المعلومات والوقاية التقنية',
+          titleEn: 'Cybersecurity & Tech Safety',
+          descriptionAr: 'الوقاية من رسائل الاحتيال البنكي، اختراق الواتساب، وتأمين كاميرات المنزل',
+          descriptionEn: 'Protection against phishing SMS, banking fraud, 2FA leaks, and IoT security',
+          icon: 'security',
+          colorHex: 0xFF6366F1,
+        ),
+      ];
+
+  // 2. Default User Profiles
+  static List<UserProfile> get defaultProfiles => [];
+
+  // 3. Official Saudi Emergency Contacts
+  static List<EmergencyContact> get emergencyContacts => [
+        const EmergencyContact(
+          id: 'ec_911',
+          nameAr: 'المركز الوطني للعمليات الأمنية (911)',
+          nameEn: 'National Center for Security Operations (911)',
+          number: '911',
+          icon: 'emergency',
+          descriptionAr: 'الرقم الموحد للطوارئ الأمنية والمرورية والدفاع المدني في مناطق المملكة',
+          descriptionEn: 'Unified emergency number for security, traffic, and civil defense',
+          priority: 1,
+          isOfficial: true,
+        ),
+        const EmergencyContact(
+          id: 'ec_998',
+          nameAr: 'الدفاع المدني السعودي',
+          nameEn: 'Saudi Civil Defense',
+          number: '998',
+          icon: 'local_fire_department',
+          descriptionAr: 'طوارئ الحرائق، الإنقاذ، حوادث الاحتجاز، مخاطر السيول، والانهيارات',
+          descriptionEn: 'Firefighting, search and rescue, flood rescue, and structural collapses',
+          priority: 2,
+          isOfficial: true,
+        ),
+        const EmergencyContact(
+          id: 'ec_997',
+          nameAr: 'الهلال الأحمر السعودي',
+          nameEn: 'Saudi Red Crescent Authority',
+          number: '997',
+          icon: 'medical_services',
+          descriptionAr: 'الإسعاف الطبي الطارئ، الحالات الحرجة، النقل الإسعافي، والإصابات',
+          descriptionEn: 'Emergency medical ambulance and paramedic urgent response',
+          priority: 3,
+          isOfficial: true,
+        ),
+        const EmergencyContact(
+          id: 'ec_996',
+          nameAr: 'القوات الخاصة لأمن الطرق',
+          nameEn: 'Special Highway Security Forces',
+          number: '996',
+          icon: 'add_road',
+          descriptionAr: 'حوادث وبلاغات الطرق السريعة بين مدن ومحافظات المملكة',
+          descriptionEn: 'Highway security and accident assistance across Saudi intercity roads',
+          priority: 4,
+          isOfficial: true,
+        ),
+        const EmergencyContact(
+          id: 'ec_993',
+          nameAr: 'طوارئ المرور (993)',
+          nameEn: 'Traffic Emergency (993)',
+          number: '993',
+          icon: 'traffic',
+          descriptionAr: 'طوارئ المرور والحوادث داخل المدن والمحافظات',
+          descriptionEn: 'Traffic emergency and city accident reporting',
+          priority: 5,
+          isOfficial: true,
+        ),
+        const EmergencyContact(
+          id: 'ec_999',
+          nameAr: 'الدوريات الأمنية (الشرطة)',
+          nameEn: 'Police Patrols',
+          number: '999',
+          icon: 'local_police',
+          descriptionAr: 'البلاغات الجنائية، حفظ الأمن العام، والاستجابة الأمنية الفورية',
+          descriptionEn: 'Criminal reporting, public safety, and immediate police response',
+          priority: 5,
+          isOfficial: true,
+        ),
+        const EmergencyContact(
+          id: 'ec_933',
+          nameAr: 'طوارئ الكهرباء (الشركة السعودية للكهرباء)',
+          nameEn: 'Saudi Electricity Emergency',
+          number: '933',
+          icon: 'bolt',
+          descriptionAr: 'انقطاع التيار، شرر المحولات، سقوط الكابلات الكهربائية والأعمدة',
+          descriptionEn: 'Power outages, sparking transformers, and fallen electrical wires',
+          priority: 6,
+          isOfficial: true,
+        ),
+        const EmergencyContact(
+          id: 'ec_939',
+          nameAr: 'طوارئ المياه (شركة المياه الوطنية)',
+          nameEn: 'National Water Emergency',
+          number: '939',
+          icon: 'water_damage',
+          descriptionAr: 'انكسار خطوط المياه الرئيسية، تسرب الشبكات العامة، والفيضانات المائية',
+          descriptionEn: 'Main water line bursts and public network leaks',
+          priority: 7,
+          isOfficial: true,
+        ),
+        const EmergencyContact(
+          id: 'ec_najm',
+          nameAr: 'شركة نجم لخدمات الحوادث',
+          nameEn: 'Najm Insurance Services',
+          number: '199033',
+          icon: 'car_crash',
+          descriptionAr: 'مباشرة الحوادث المرورية المؤمنة في المملكة وتخطيط الحادث',
+          descriptionEn: 'Reporting insured vehicular traffic accidents and damage assessment',
+          priority: 8,
+          isOfficial: true,
+        ),
+        const EmergencyContact(
+          id: 'ec_937',
+          nameAr: 'مركز صحة (وزارة الصحة)',
+          nameEn: 'MOH Medical Consultation (937)',
+          number: '937',
+          icon: 'support_agent',
+          descriptionAr: 'الاستشارات الطبية العاجلة، حالات التسمم، وتوجيه لأقرب مركز طوارئ',
+          descriptionEn: 'Urgent medical consultations, poison control advice, and hospital directions',
+          priority: 9,
+          isOfficial: true,
+        ),
+      ];
+
+  // 4. Gamification Badges
+  static List<SafetyBadge> get defaultBadges => [
+        const SafetyBadge(
+          id: 'b_first_sim',
+          code: 'first_sim',
+          titleAr: 'أول محاكاة',
+          titleEn: 'First Simulation',
+          descriptionAr: 'أكملت أول سيناريو تدريبي بنجاح ودخلت عالم الجاهزية',
+          descriptionEn: 'Successfully completed your first training scenario',
+          icon: 'play_circle_filled',
+          requiredXp: 50,
+          categoryId: 'general',
+        ),
+        const SafetyBadge(
+          id: 'b_fire_hero',
+          code: 'fire_hero',
+          titleAr: 'مدافع الحريق',
+          titleEn: 'Fire Defender',
+          descriptionAr: 'أظهرت معرفة تامة بإجراءات إخلاء المباني وإطفاء الحرائق',
+          descriptionEn: 'Demonstrated complete mastery in fire evacuation and response',
+          icon: 'local_fire_department',
+          requiredXp: 150,
+          categoryId: 'fire',
+        ),
+        const SafetyBadge(
+          id: 'b_flood_guard',
+          code: 'flood_guard',
+          titleAr: 'درع السيول',
+          titleEn: 'Flood Guard',
+          descriptionAr: 'اتخذت القرارات الصائبة لحماية النفس والمركبة من مخاطر السيول',
+          descriptionEn: 'Made correct decisions safeguarding life and vehicle during floods',
+          icon: 'tsunami',
+          requiredXp: 150,
+          categoryId: 'flood',
+        ),
+        const SafetyBadge(
+          id: 'b_fast_responder',
+          code: 'fast_responder',
+          titleAr: 'مستجيب سريع',
+          titleEn: 'Quick Responder',
+          descriptionAr: 'استجبت في أقل من 10 ثوانٍ واتخذت قراراً آثراً بحكمة',
+          descriptionEn: 'Responded in under 10 seconds making a safe decision',
+          icon: 'bolt',
+          requiredXp: 100,
+          categoryId: 'general',
+        ),
+        const SafetyBadge(
+          id: 'b_ready_champion',
+          code: 'ready_champion',
+          titleAr: 'بطل الجاهزية',
+          titleEn: 'Readiness Champion',
+          descriptionAr: 'حققت درجة جاهزية شاملة تفوق 90% عبر جميع مجالات السلامة',
+          descriptionEn: 'Achieved an overall preparedness score above 90% across all domains',
+          icon: 'military_tech',
+          requiredXp: 500,
+          categoryId: 'general',
+        ),
+        const SafetyBadge(
+          id: 'b_desert_master',
+          code: 'desert_master',
+          titleAr: 'بطل البر والسيول',
+          titleEn: 'Desert & Wadi Master',
+          descriptionAr: 'أظهرت حكمة بالغة في تجنب السيول المنقولة والانغراز التكتيكي في البر',
+          descriptionEn: 'Mastered wadi flash flood avoidance and desert navigation tactics',
+          icon: 'landscape',
+          requiredXp: 200,
+          categoryId: 'desert_safety',
+        ),
+        const SafetyBadge(
+          id: 'b_cyber_shield',
+          code: 'cyber_shield',
+          titleAr: 'درع الحماية الرقمية',
+          titleEn: 'Cyber Shield Master',
+          descriptionAr: 'كشفت محاولات الاحتيال البنكي وحميت حسابات الأسرة وكاميراتها',
+          descriptionEn: 'Identified phishing scams and protected family accounts & IoT devices',
+          icon: 'security',
+          requiredXp: 200,
+          categoryId: 'cyber_safety',
+        ),
+      ];
+
+  // 5. Complete Interactive Multi-Station Scenarios (9 Scenarios x 10 Categories = 90 Scenarios, 5 Stations Each)
+  static List<Scenario> get initialScenarios => [
+        ...ScenariosFire.list,
+        ...ScenariosFlood.list,
+        ...ScenariosHeat.list,
+        ...ScenariosTraffic.list,
+        ...ScenariosHome.list,
+        ...ScenariosEvacuation.list,
+        ...ScenariosElectric.list,
+        ...ScenariosEmergencyKit.list,
+        ...ScenariosDesert.list,
+        ...ScenariosCyber.list,
+      ];
+
+  // 6. Offline Educational Knowledge Articles
+  static List<KnowledgeArticle> get knowledgeArticles => [
+        const KnowledgeArticle(
+          id: 'art_fire_1',
+          categoryId: 'fire',
+          titleAr: 'دليل سلامة الحرائق المنظّم وكيفية الإخلاء',
+          titleEn: 'Structured Fire Safety Guide & Evacuation',
+          summaryAr: 'دليل متكامل حول كيفية التعامل مع الحرائق المنزلية والتجارية، واستخدام الطفايات بنجاح.',
+          summaryEn: 'Complete guide on handling residential and commercial fires using extinguishers.',
+          contentAr: 'الحرائق المنزلية تتطلب سرعة بديهة والالتزام بقواعد السلامة العالمية. يجب فحص كواشف الدخان دورياً وتجهيز طفاية بودرة جافة ذات سعة مناسبة بالمنزل.',
+          contentEn: 'Residential fires require fast reaction and compliance with international safety standards.',
+          icon: 'local_fire_department',
+          stepsAr: [
+            'فصل مصدر الغاز أو الكهرباء المباشر إن أمكن',
+            'استخدام طفاية البودرة وفق قاعدة PASS',
+            'الانخفاض أسفل مستوى الدخان لحماية الرئتين',
+            'الخروج لنقطة التجمع والاتصال بـ 998/911',
+          ],
+          stepsEn: [
+            'Shut off immediate gas or electrical power source if safe',
+            'Operate dry powder extinguisher following PASS rule',
+            'Crawl low under smoke layer to protect respiratory tract',
+            'Evacuate to assembly point and dial 998/911',
+          ],
+          doListAr: [
+            'تثبيت كاشف الدخان بالأسقف',
+            'وضع طفاية الحريق بمكان بارز وقريب من المخرج',
+          ],
+          doListEn: [
+            'Install ceiling smoke detectors',
+            'Position fire extinguisher near exit routes',
+          ],
+          dontListAr: [
+            'عدم سكب الماء على حرائق الزيت المشتعلة',
+            'عدم استخدام المصاعد الكهربائية إطلاقاً',
+          ],
+          dontListEn: [
+            'Never pour water on burning oil grease fires',
+            'Never ride elevators during fire emergency alarms',
+          ],
+          readingTimeMinutes: 3,
+        ),
+        const KnowledgeArticle(
+          id: 'art_flood_1',
+          categoryId: 'flood',
+          titleAr: 'دليل الوقاية من السيول والنجاة من جريان الأودية',
+          titleEn: 'Flash Flood Prevention & Wadi Safety Guide',
+          summaryAr: 'كيفية قراءة الإنذار المبكر والتصرف عند احتجاز المركبة بمجرى السيل.',
+          summaryEn: 'How to interpret early weather warnings and escape submerged vehicles.',
+          contentAr: 'تتميز السيول المنقولة في المملكة بسرعة جريانها المفاجئ حتى دون هطول الأمطار في موقعك. تجنب إقامة الكشتات في بطون الأودية ومجاري السيول.',
+          contentEn: 'Saudi wadi flash floods move violently downstream even without local rainfall.',
+          icon: 'water',
+          stepsAr: [
+            'متابعة تحذيرات المركز الوطني للأرصاد وتطبيق الدفاع المدني',
+            'التوقف قبل مجرى الوادي وعدم المخاطرة بقطعه',
+            'فتح النوافذ وفك حزام الأمان فور وصول المياه للسيارة',
+            'الاعتلاء فوق سقف السيارة والتواصل مع 911/998',
+          ],
+          stepsEn: [
+            'Monitor National Meteorology Center alerts and Civil Defense app',
+            'Stop ahead of wadi bed and never risk driving into current',
+            'Open power windows and unbuckle belts before battery fails',
+            'Climb onto car roof and signal rescue teams',
+          ],
+          doListAr: [
+            'الابتعاد عن المناطق المنخفضة وتجمعات المياه',
+            'الاستماع لتعليمات الأمن والسلامة عبر الراديو',
+          ],
+          doListEn: [
+            'Evacuate low-lying wadi zones immediately',
+            'Listen for official Civil Defense broadcasts',
+          ],
+          dontListAr: [
+            'عدم تجسير السيل بالمركبات أو السباحة فيه',
+            'عدم إغلاق الأبواب والنوافذ عند انغمار السيارة',
+          ],
+          dontListEn: [
+            'Do not attempt driving or swimming through torrents',
+            'Do not seal vehicle windows when water rises',
+          ],
+          readingTimeMinutes: 4,
+        ),
+        const KnowledgeArticle(
+          id: 'art_heat_1',
+          categoryId: 'heat',
+          titleAr: 'الوقاية من ضربات الشمس والإجهاد الحراري صيفاً',
+          titleEn: 'Sunstroke Prevention & Extreme Heat Survival',
+          summaryAr: 'دليل التعامل مع الإنهاك الحراري ضربات الشمس في أجواء الصيف القاسية.',
+          summaryEn: 'Guide for managing heat exhaustion and sunstrokes in peak summer heat.',
+          contentAr: 'ترتفع درجات الحرارة صيفاً لمستويات عالية، مما يزيد خطورة ضربة الشمس والإجهاد الحراري للأشخاص العاملين بالهواء الطلق.',
+          contentEn: 'Summer temperatures in the region require strict hydration and heat protocols.',
+          icon: 'wb_sunny',
+          stepsAr: [
+            'نقل المصاب لمكان مظلل ومكيف فوراً',
+            'تخفيف الملابس الثقيلة والضاغطة',
+            'وضع كمادات باردة على الرقبة والإبطين والمغبن',
+            'تقديم رشفات ماء معتدل والاتصال بـ 997',
+          ],
+          stepsEn: [
+            'Move victim immediately to shaded air-conditioned spot',
+            'Loosen tight, heavy clothing',
+            'Apply cool damp cloths to neck, armpits, and groin',
+            'Offer moderate sips of water and dial 997',
+          ],
+          doListAr: [
+            'شرب كميات كافية من المياه طوال اليوم',
+            'ارتداء ملابس قطنية خفيفة وزاهية اللون',
+          ],
+          doListEn: [
+            'Drink plenty of water continuously',
+            'Wear loose light-colored cotton clothing',
+          ],
+          dontListAr: [
+            'عدم التعرض المباشر للشمس في أوقات الذروة',
+            'عدم غمر المصاب بالثلج المباشر تفادياً للصدمة',
+          ],
+          dontListEn: [
+            'Avoid direct sun exposure during peak noon hours',
+            'Do not submerge heatstroke victims in ice water',
+          ],
+          readingTimeMinutes: 3,
+        ),
+        const KnowledgeArticle(
+          id: 'art_traffic_1',
+          categoryId: 'traffic',
+          titleAr: 'دليل السلامة المرورية وتأمين مواقع حوادث الطرق',
+          titleEn: 'Traffic Safety & Highway Accident Response Guide',
+          summaryAr: 'خطوات تأمين موقع الحادث السريع والاستجابة الإسعافية الأولى.',
+          summaryEn: 'Step-by-step procedure to secure highway accident scenes safely.',
+          contentAr: 'حوادث الطرق السريعة تتطلب تأميناً خلفياً لمنع الحوادث المتسلسلة الناتجة عن اصطدام السيارات القادمة بسرعات عالية.',
+          contentEn: 'Highway accidents require immediate upstream warning to prevent secondary crashes.',
+          icon: 'directions_car',
+          stepsAr: [
+            'إيقاف المركبة على الأكتاف الترابية وتفعيل أضواء التحذير',
+            'وضع مثلث السلامة العاكس على مسافة 100 متر خلف الحادث',
+            'عدم تحريك مصابي الحوادث إلا لخطر الحريق المؤكد',
+            'الاتصال بـ 911 / 996 (أمن الطرق) لتحديد الموقع',
+          ],
+          stepsEn: [
+            'Park vehicle safely on shoulder activating hazard flashers',
+            'Place warning triangle 100m upstream behind accident',
+            'Do not move crash victims unless fire threatens life',
+            'Call 911 / 996 specifying exact road kilometer marker',
+          ],
+          doListAr: [
+            'ارتداء سترة السلامة العاكسة عند الترجل ليلاً',
+            'فصل قاطع بطارية السيارات المصابة لتفادي الشرر',
+          ],
+          doListEn: [
+            'Wear high-vis reflective vest at night',
+            'Disconnect crashed car battery to eliminate sparks',
+          ],
+          dontListAr: [
+            'عدم التجمهر حول الحادث وإعاقة سيارات الإسعاف',
+            'عدم التوقف المفاجئ وسط المسارات السريعة',
+          ],
+          dontListEn: [
+            'Do not crowd crash scenes impeding emergency vehicles',
+            'Never slam brakes mid-fast lane on highways',
+          ],
+          readingTimeMinutes: 3,
+        ),
+      ];
+}
