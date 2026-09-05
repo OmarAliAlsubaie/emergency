@@ -181,7 +181,7 @@
         },
 
         // =========================================================================
-        // CONTINUOUS 60+ SECONDS CATEGORY STATION AMBIANCE (INFINITE LOOPING)
+        // COMFORTABLE & SMOOTH AMBIENT SOUNDSCAPES FOR ALL 10 CATEGORIES
         // =========================================================================
         stopStationAmbiance: function() {
           if (window._activeStationNodes) {
@@ -197,260 +197,271 @@
           window._activeStationNodes.push(node);
         },
 
+        // 1. Fire: Soft Hearth Crackle & Warm Ambiance (No harsh sirens)
         playFireStationSound: function() {
           this.stopStationAmbiance();
           try {
             var ctx = getContext();
             if (ctx.state === 'suspended') ctx.resume();
             var now = ctx.currentTime;
-
-            // 60s Siren Sweep Loop
-            var osc = ctx.createOscillator();
+            var bufferSize = ctx.sampleRate * 4;
+            var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            var data = buffer.getChannelData(0);
+            for (var i = 0; i < bufferSize; i++) {
+              data[i] = (Math.random() - 0.5) * 0.15;
+            }
+            var noise = ctx.createBufferSource();
+            noise.buffer = buffer;
+            noise.loop = true;
+            var filter = ctx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(320, now);
             var gain = ctx.createGain();
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(650, now);
-            gain.gain.setValueAtTime(0.35, now);
-
-            // Oscillate siren pitch back and forth continuously
-            var lfo = ctx.createOscillator();
-            var lfoGain = ctx.createGain();
-            lfo.frequency.setValueAtTime(0.8, now); // 0.8 Hz siren cycle
-            lfoGain.gain.setValueAtTime(350, now);
-            lfo.connect(osc.frequency);
-            lfo.start(now);
-
-            osc.connect(gain);
+            gain.gain.setValueAtTime(0.20, now);
+            noise.connect(filter);
+            filter.connect(gain);
             gain.connect(ctx.destination);
-            osc.start(now);
-
-            this._addNode(osc);
-            this._addNode(lfo);
+            noise.start(now);
+            this._addNode(noise);
           } catch(e) {}
         },
 
+        // 2. Flood: Soft Water Stream & Rain Flow
         playFloodStationSound: function() {
           this.stopStationAmbiance();
           try {
             var ctx = getContext();
             if (ctx.state === 'suspended') ctx.resume();
             var now = ctx.currentTime;
-
-            // 1. Continuous Roaring Water Noise (60+ Seconds Infinite Loop)
-            var bufferSize = ctx.sampleRate * 5.0;
+            var bufferSize = ctx.sampleRate * 5;
             var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
             var data = buffer.getChannelData(0);
             for (var i = 0; i < bufferSize; i++) {
-              data[i] = Math.random() * 2 - 1;
+              data[i] = (Math.random() - 0.5) * 0.25;
             }
-
             var noise = ctx.createBufferSource();
             noise.buffer = buffer;
-            noise.loop = true; // INFINITE CONTINUOUS LOOP FOR FULL STATION DURATION
-
+            noise.loop = true;
             var filter = ctx.createBiquadFilter();
             filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(450, now);
-
-            // Modulate filter for realistic water surge
+            filter.frequency.setValueAtTime(280, now);
             var lfo = ctx.createOscillator();
             var lfoGain = ctx.createGain();
-            lfo.frequency.setValueAtTime(0.3, now);
-            lfoGain.gain.setValueAtTime(200, now);
+            lfo.frequency.setValueAtTime(0.2, now);
+            lfoGain.gain.setValueAtTime(100, now);
             lfo.connect(filter.frequency);
             lfo.start(now);
-
             var gain = ctx.createGain();
-            gain.gain.setValueAtTime(0.40, now); // LOUD AND CLEAR WATER SOUND
-
+            gain.gain.setValueAtTime(0.25, now);
             noise.connect(filter);
             filter.connect(gain);
             gain.connect(ctx.destination);
             noise.start(now);
-
             this._addNode(noise);
             this._addNode(lfo);
-          } catch(e) { console.error(e); }
+          } catch(e) {}
         },
 
+        // 3. Electric: Soft Low Frequency Electrical Transformer Hum
         playElectricStationSound: function() {
           this.stopStationAmbiance();
           try {
             var ctx = getContext();
             if (ctx.state === 'suspended') ctx.resume();
             var now = ctx.currentTime;
-
             var osc = ctx.createOscillator();
             var gain = ctx.createGain();
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(120, now); // 120Hz Mains Electrical Buzz
-
-            var lfo = ctx.createOscillator();
-            var lfoGain = ctx.createGain();
-            lfo.type = 'square';
-            lfo.frequency.setValueAtTime(12, now);
-            lfoGain.gain.setValueAtTime(40, now);
-            lfo.connect(osc.frequency);
-            lfo.start(now);
-
-            gain.gain.setValueAtTime(0.35, now);
-
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(60, now);
+            gain.gain.setValueAtTime(0.18, now);
             osc.connect(gain);
             gain.connect(ctx.destination);
             osc.start(now);
-
             this._addNode(osc);
-            this._addNode(lfo);
           } catch(e) {}
         },
 
+        // 4. Heat: Soft Thermal Breeze Swell
         playHeatStationSound: function() {
           this.stopStationAmbiance();
           try {
             var ctx = getContext();
             if (ctx.state === 'suspended') ctx.resume();
             var now = ctx.currentTime;
-
-            // Continuous Heartbeat Pulses Generator
-            var self = this;
-            var heartbeatInterval = setInterval(function() {
-              if (!window._activeStationNodes || window._activeStationNodes.length === 0) {
-                clearInterval(heartbeatInterval);
-                return;
-              }
-              try {
-                var nowT = ctx.currentTime;
-                [0, 0.18].forEach(function(delay, i) {
-                  var osc = ctx.createOscillator();
-                  var gain = ctx.createGain();
-                  osc.type = 'sine';
-                  osc.frequency.setValueAtTime(i === 0 ? 75 : 55, nowT + delay);
-                  gain.gain.setValueAtTime(0.45, nowT + delay);
-                  gain.gain.exponentialRampToValueAtTime(0.001, nowT + delay + 0.14);
-                  osc.connect(gain);
-                  gain.connect(ctx.destination);
-                  osc.start(nowT + delay);
-                  osc.stop(nowT + delay + 0.14);
-                });
-              } catch(e){}
-            }, 900);
-
-            // Dummy node to keep interval state active
-            var dummyOsc = ctx.createOscillator();
-            dummyOsc.start(now);
-            this._addNode(dummyOsc);
+            var osc = ctx.createOscillator();
+            var gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(110, now);
+            var lfo = ctx.createOscillator();
+            var lfoGain = ctx.createGain();
+            lfo.frequency.setValueAtTime(0.15, now);
+            lfoGain.gain.setValueAtTime(20, now);
+            lfo.connect(osc.frequency);
+            lfo.start(now);
+            gain.gain.setValueAtTime(0.15, now);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            this._addNode(osc);
+            this._addNode(lfo);
           } catch(e) {}
         },
 
+        // 5. Traffic: Soft Asphalt & Distant Road Drift
         playTrafficStationSound: function() {
           this.stopStationAmbiance();
           try {
             var ctx = getContext();
             if (ctx.state === 'suspended') ctx.resume();
             var now = ctx.currentTime;
-
-            var osc = ctx.createOscillator();
+            var bufferSize = ctx.sampleRate * 4;
+            var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            var data = buffer.getChannelData(0);
+            for (var i = 0; i < bufferSize; i++) {
+              data[i] = (Math.random() - 0.5) * 0.15;
+            }
+            var noise = ctx.createBufferSource();
+            noise.buffer = buffer;
+            noise.loop = true;
+            var filter = ctx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(220, now);
             var gain = ctx.createGain();
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(440, now);
-
-            var lfo = ctx.createOscillator();
-            lfo.frequency.setValueAtTime(2.0, now);
-            var lfoGain = ctx.createGain();
-            lfoGain.gain.setValueAtTime(250, now);
-            lfo.connect(osc.frequency);
-            lfo.start(now);
-
-            gain.gain.setValueAtTime(0.35, now);
-
-            osc.connect(gain);
+            gain.gain.setValueAtTime(0.20, now);
+            noise.connect(filter);
+            filter.connect(gain);
             gain.connect(ctx.destination);
-            osc.start(now);
-
-            this._addNode(osc);
-            this._addNode(lfo);
+            noise.start(now);
+            this._addNode(noise);
           } catch(e) {}
         },
 
+        // 6. Cyber: Soft Ambient Cyber Synth Pad
         playCyberStationSound: function() {
           this.stopStationAmbiance();
           try {
             var ctx = getContext();
             if (ctx.state === 'suspended') ctx.resume();
             var now = ctx.currentTime;
-
-            var bufferSize = ctx.sampleRate * 2;
-            var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-            var data = buffer.getChannelData(0);
-            for (var i = 0; i < bufferSize; i++) {
-              data[i] = (Math.random() - 0.5) * 0.2;
-            }
-
-            var noise = ctx.createBufferSource();
-            noise.buffer = buffer;
-            noise.loop = true;
-
-            var filter = ctx.createBiquadFilter();
-            filter.type = 'bandpass';
-            filter.frequency.setValueAtTime(1500, now);
-            filter.Q.setValueAtTime(5.0, now);
-
-            var gain = ctx.createGain();
-            gain.gain.setValueAtTime(0.30, now);
-
-            noise.connect(filter);
-            filter.connect(gain);
-            gain.connect(ctx.destination);
-            noise.start(now);
-
-            this._addNode(noise);
+            [261.63, 329.63, 392.00].forEach(function(freq) {
+              var osc = ctx.createOscillator();
+              var gain = ctx.createGain();
+              osc.type = 'sine';
+              osc.frequency.setValueAtTime(freq, now);
+              gain.gain.setValueAtTime(0.08, now);
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.start(now);
+              window.EmergencyAudioSynth._addNode(osc);
+            });
           } catch(e) {}
         },
 
+        // 7. Desert: Soft Desert Sandstorm Breeze Swell
         playDesertStationSound: function() {
           this.stopStationAmbiance();
           try {
             var ctx = getContext();
             if (ctx.state === 'suspended') ctx.resume();
             var now = ctx.currentTime;
-
             var bufferSize = ctx.sampleRate * 4;
             var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
             var data = buffer.getChannelData(0);
             for (var i = 0; i < bufferSize; i++) {
-              data[i] = Math.random() * 2 - 1;
+              data[i] = (Math.random() - 0.5) * 0.2;
             }
-
             var noise = ctx.createBufferSource();
             noise.buffer = buffer;
             noise.loop = true;
-
             var filter = ctx.createBiquadFilter();
             filter.type = 'bandpass';
-            filter.frequency.setValueAtTime(350, now);
-
+            filter.frequency.setValueAtTime(260, now);
+            filter.Q.setValueAtTime(2.0, now);
             var lfo = ctx.createOscillator();
             var lfoGain = ctx.createGain();
-            lfo.frequency.setValueAtTime(0.2, now);
-            lfoGain.gain.setValueAtTime(250, now);
+            lfo.frequency.setValueAtTime(0.12, now);
+            lfoGain.gain.setValueAtTime(120, now);
             lfo.connect(filter.frequency);
             lfo.start(now);
-
             var gain = ctx.createGain();
-            gain.gain.setValueAtTime(0.38, now);
-
+            gain.gain.setValueAtTime(0.22, now);
             noise.connect(filter);
             filter.connect(gain);
             gain.connect(ctx.destination);
             noise.start(now);
-
             this._addNode(noise);
             this._addNode(lfo);
           } catch(e) {}
         },
 
-        playEvacuationStationSound: function() { this.playFireStationSound(); },
-        playHomeStationSound: function() { this.playElectricStationSound(); },
-        playKitStationSound: function() { this.playSuccess(); }
+        // 8. Evacuation: Soft Hallway Ambiance
+        playEvacuationStationSound: function() {
+          this.stopStationAmbiance();
+          try {
+            var ctx = getContext();
+            if (ctx.state === 'suspended') ctx.resume();
+            var now = ctx.currentTime;
+            var osc = ctx.createOscillator();
+            var gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(140, now);
+            gain.gain.setValueAtTime(0.15, now);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            this._addNode(osc);
+          } catch(e) {}
+        },
+
+        // 9. Home: Soft Indoor Airflow Ambiance
+        playHomeStationSound: function() {
+          this.stopStationAmbiance();
+          try {
+            var ctx = getContext();
+            if (ctx.state === 'suspended') ctx.resume();
+            var now = ctx.currentTime;
+            var bufferSize = ctx.sampleRate * 3;
+            var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            var data = buffer.getChannelData(0);
+            for (var i = 0; i < bufferSize; i++) {
+              data[i] = (Math.random() - 0.5) * 0.1;
+            }
+            var noise = ctx.createBufferSource();
+            noise.buffer = buffer;
+            noise.loop = true;
+            var filter = ctx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(180, now);
+            var gain = ctx.createGain();
+            gain.gain.setValueAtTime(0.15, now);
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(ctx.destination);
+            noise.start(now);
+            this._addNode(noise);
+          } catch(e) {}
+        },
+
+        // 10. Emergency Kit: Soft Celestial Chime Ambiance
+        playKitStationSound: function() {
+          this.stopStationAmbiance();
+          try {
+            var ctx = getContext();
+            if (ctx.state === 'suspended') ctx.resume();
+            var now = ctx.currentTime;
+            [349.23, 440.00, 523.25, 698.46].forEach(function(freq) {
+              var osc = ctx.createOscillator();
+              var gain = ctx.createGain();
+              osc.type = 'triangle';
+              osc.frequency.setValueAtTime(freq, now);
+              gain.gain.setValueAtTime(0.08, now);
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.start(now);
+              window.EmergencyAudioSynth._addNode(osc);
+            });
+          } catch(e) {}
+        }
       };
     })();
   </script>

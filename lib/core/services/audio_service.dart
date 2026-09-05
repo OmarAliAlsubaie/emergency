@@ -111,46 +111,37 @@ class AudioService {
   void playStationSound(String categoryId) {
     if (_isMuted) return;
     try {
+      HapticFeedback.lightImpact();
       switch (categoryId) {
         case 'fire':
-          playSirenAlert();
           _callWebSynth('playFireStationSound');
           break;
         case 'electric':
-          playElectricZap();
           _callWebSynth('playElectricStationSound');
           break;
         case 'heat':
-          playHeartbeat();
           _callWebSynth('playHeatStationSound');
           break;
         case 'flood':
-          HapticFeedback.mediumImpact();
           _callWebSynth('playFloodStationSound');
           break;
         case 'traffic':
-          HapticFeedback.heavyImpact();
           _callWebSynth('playTrafficStationSound');
           break;
         case 'cyber':
-          HapticFeedback.lightImpact();
           _callWebSynth('playCyberStationSound');
           break;
         case 'desert_safety':
-          HapticFeedback.selectionClick();
           _callWebSynth('playDesertStationSound');
           break;
         case 'evacuation':
-          HapticFeedback.vibrate();
           _callWebSynth('playEvacuationStationSound');
           break;
         case 'home':
-          HapticFeedback.lightImpact();
           _callWebSynth('playHomeStationSound');
           break;
         case 'emergency_kit':
         default:
-          playSuccess();
           _callWebSynth('playKitStationSound');
           break;
       }
