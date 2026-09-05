@@ -25,7 +25,7 @@ class ScenarioBuilder {
       descriptionAr: descriptionAr,
       descriptionEn: descriptionEn,
       difficulty: difficulty,
-      timeLimitSeconds: 15,
+      timeLimitSeconds: 30,
       icon: icon,
       colorHex: colorHex,
       steps: List.generate(stations.length, (index) {

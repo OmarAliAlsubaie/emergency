@@ -180,65 +180,187 @@
           } catch(e) {}
         },
 
-        // Category Station Themed Audio Synthesizers
-        playFireStationSound: function() { this.playSiren(); },
-        playFloodStationSound: function() {
+        // Category Station Themed Audio Synthesizers (3-Second Auditory Immersion)
+        playFireStationSound: function() {
           try {
             var ctx = getContext();
+            if (ctx.state === 'suspended') ctx.resume();
+            var now = ctx.currentTime;
             var osc = ctx.createOscillator();
             var gain = ctx.createGain();
-            osc.type = 'sine';
-            var now = ctx.currentTime;
-            osc.frequency.setValueAtTime(180, now);
-            osc.frequency.linearRampToValueAtTime(320, now + 0.5);
-            gain.gain.setValueAtTime(0.15, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(650, now);
+            osc.frequency.linearRampToValueAtTime(1300, now + 0.7);
+            osc.frequency.linearRampToValueAtTime(650, now + 1.4);
+            osc.frequency.linearRampToValueAtTime(1300, now + 2.1);
+            osc.frequency.linearRampToValueAtTime(650, now + 2.8);
+            gain.gain.setValueAtTime(0.35, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 3.0);
             osc.connect(gain);
             gain.connect(ctx.destination);
             osc.start(now);
-            osc.stop(now + 0.6);
+            osc.stop(now + 3.0);
           } catch(e) {}
         },
-        playElectricStationSound: function() { this.playZap(); },
-        playHeatStationSound: function() { this.playHeartbeat(); },
-        playTrafficStationSound: function() { this.playAlarm(); },
+        playFloodStationSound: function() {
+          try {
+            var ctx = getContext();
+            if (ctx.state === 'suspended') ctx.resume();
+            var now = ctx.currentTime;
+
+            // 1. Water Torrent Roar (Low-pass filtered White Noise)
+            var bufferSize = ctx.sampleRate * 3.0;
+            var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            var data = buffer.getChannelData(0);
+            for (var i = 0; i < bufferSize; i++) {
+              data[i] = Math.random() * 2 - 1;
+            }
+
+            var noise = ctx.createBufferSource();
+            noise.buffer = buffer;
+
+            var filter = ctx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(350, now);
+            filter.frequency.linearRampToValueAtTime(750, now + 1.5);
+            filter.frequency.linearRampToValueAtTime(300, now + 3.0);
+
+            var gain = ctx.createGain();
+            gain.gain.setValueAtTime(0.4, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 3.0);
+
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(ctx.destination);
+            noise.start(now);
+
+            // 2. Secondary Water Wave Oscillations
+            var osc = ctx.createOscillator();
+            var oscGain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(140, now);
+            osc.frequency.linearRampToValueAtTime(280, now + 1.5);
+            osc.frequency.linearRampToValueAtTime(120, now + 3.0);
+
+            oscGain.gain.setValueAtTime(0.35, now);
+            oscGain.gain.exponentialRampToValueAtTime(0.01, now + 3.0);
+
+            osc.connect(oscGain);
+            oscGain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 3.0);
+          } catch(e) {}
+        },
+        playElectricStationSound: function() {
+          try {
+            var ctx = getContext();
+            if (ctx.state === 'suspended') ctx.resume();
+            var now = ctx.currentTime;
+            var osc = ctx.createOscillator();
+            var gain = ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(1600, now);
+            osc.frequency.exponentialRampToValueAtTime(100, now + 1.5);
+            osc.frequency.setValueAtTime(1400, now + 1.6);
+            osc.frequency.exponentialRampToValueAtTime(80, now + 3.0);
+            gain.gain.setValueAtTime(0.4, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 3.0);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 3.0);
+          } catch(e) {}
+        },
+        playHeatStationSound: function() {
+          try {
+            var ctx = getContext();
+            if (ctx.state === 'suspended') ctx.resume();
+            var now = ctx.currentTime;
+            [0, 0.7, 1.4, 2.1].forEach(function(startT) {
+              [0, 0.2].forEach(function(delay, i) {
+                var osc = ctx.createOscillator();
+                var gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(i === 0 ? 80 : 60, now + startT + delay);
+                gain.gain.setValueAtTime(0.45, now + startT + delay);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + startT + delay + 0.15);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now + startT + delay);
+                osc.stop(now + startT + delay + 0.15);
+              });
+            });
+          } catch(e) {}
+        },
+        playTrafficStationSound: function() {
+          try {
+            var ctx = getContext();
+            if (ctx.state === 'suspended') ctx.resume();
+            var now = ctx.currentTime;
+            var osc = ctx.createOscillator();
+            var gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(450, now);
+            osc.frequency.linearRampToValueAtTime(900, now + 1.5);
+            osc.frequency.linearRampToValueAtTime(450, now + 3.0);
+            gain.gain.setValueAtTime(0.35, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 3.0);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 3.0);
+          } catch(e) {}
+        },
         playCyberStationSound: function() {
           try {
             var ctx = getContext();
+            if (ctx.state === 'suspended') ctx.resume();
             var now = ctx.currentTime;
-            [1200, 1600, 2000].forEach(function(freq, i) {
+            var notes = [1200, 1600, 2000, 1400, 1800, 2200, 1000, 1500];
+            notes.forEach(function(freq, i) {
               var osc = ctx.createOscillator();
               var gain = ctx.createGain();
-              osc.type = 'sine';
-              osc.frequency.setValueAtTime(freq, now + i * 0.06);
-              gain.gain.setValueAtTime(0.1, now + i * 0.06);
-              gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.06 + 0.05);
+              osc.type = 'square';
+              osc.frequency.setValueAtTime(freq, now + i * 0.15);
+              gain.gain.setValueAtTime(0.2, now + i * 0.15);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.15 + 0.1);
               osc.connect(gain);
               gain.connect(ctx.destination);
-              osc.start(now + i * 0.06);
-              osc.stop(now + i * 0.06 + 0.05);
+              osc.start(now + i * 0.15);
+              osc.stop(now + i * 0.15 + 0.1);
             });
           } catch(e) {}
         },
         playDesertStationSound: function() {
           try {
             var ctx = getContext();
-            var osc = ctx.createOscillator();
-            var gain = ctx.createGain();
-            osc.type = 'triangle';
+            if (ctx.state === 'suspended') ctx.resume();
             var now = ctx.currentTime;
-            osc.frequency.setValueAtTime(300, now);
-            osc.frequency.linearRampToValueAtTime(150, now + 0.7);
-            gain.gain.setValueAtTime(0.12, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.75);
-            osc.connect(gain);
+            var bufferSize = ctx.sampleRate * 3.0;
+            var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            var data = buffer.getChannelData(0);
+            for (var i = 0; i < bufferSize; i++) {
+              data[i] = Math.random() * 2 - 1;
+            }
+            var noise = ctx.createBufferSource();
+            noise.buffer = buffer;
+            var filter = ctx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(300, now);
+            filter.frequency.linearRampToValueAtTime(650, now + 1.5);
+            filter.frequency.linearRampToValueAtTime(250, now + 3.0);
+            filter.Q.setValueAtTime(3.0, now);
+            var gain = ctx.createGain();
+            gain.gain.setValueAtTime(0.4, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 3.0);
+            noise.connect(filter);
+            filter.connect(gain);
             gain.connect(ctx.destination);
-            osc.start(now);
-            osc.stop(now + 0.75);
+            noise.start(now);
           } catch(e) {}
         },
-        playEvacuationStationSound: function() { this.playAlarm(); },
-        playHomeStationSound: function() { this.playClick(); },
+        playEvacuationStationSound: function() { this.playFireStationSound(); },
+        playHomeStationSound: function() { this.playAlarm(); },
         playKitStationSound: function() { this.playSuccess(); }
       };
     })();

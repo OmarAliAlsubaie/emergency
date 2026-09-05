@@ -113,7 +113,7 @@ class DatabaseHelper {
         descriptionAr TEXT NOT NULL,
         descriptionEn TEXT NOT NULL,
         difficulty TEXT NOT NULL,
-        timeLimitSeconds INTEGER NOT NULL DEFAULT 15,
+        timeLimitSeconds INTEGER NOT NULL DEFAULT 30,
         icon TEXT NOT NULL,
         colorHex INTEGER NOT NULL
       )
@@ -293,6 +293,8 @@ class DatabaseHelper {
     for (final art in InitialSeedData.knowledgeArticles) {
       batch.insert('knowledge_articles', art.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
     }
+
+    batch.rawUpdate('UPDATE scenarios SET timeLimitSeconds = 30;');
 
     await batch.commit(noResult: true);
   }

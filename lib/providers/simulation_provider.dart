@@ -13,7 +13,7 @@ class SimulationProvider extends ChangeNotifier {
   Scenario? _currentScenario;
   int _currentStepIndex = 0;
   SimulationStatus _status = SimulationStatus.idle;
-  int _remainingSeconds = 15;
+  int _remainingSeconds = 30;
   Timer? _timer;
   int _totalTimeTaken = 0;
   int _stepTimeTaken = 0;
@@ -72,7 +72,9 @@ class SimulationProvider extends ChangeNotifier {
 
   void _startStepTimer(bool timerEnabled) {
     _timer?.cancel();
-    _remainingSeconds = _currentScenario?.timeLimitSeconds ?? 15;
+    _remainingSeconds = (_currentScenario?.timeLimitSeconds != null && _currentScenario!.timeLimitSeconds > 0)
+        ? _currentScenario!.timeLimitSeconds
+        : 30;
     _stepTimeTaken = 0;
 
     if (!timerEnabled) return;
