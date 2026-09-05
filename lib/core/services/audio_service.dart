@@ -24,6 +24,17 @@ class AudioService {
     }
   }
 
+  void _callWebSynthWithArg(String methodName, int arg) {
+    if (_isMuted) return;
+    if (kIsWeb) {
+      try {
+        js.context.callMethod('eval', ['if (window.EmergencyAudioSynth) window.EmergencyAudioSynth.$methodName($arg);']);
+      } catch (e) {
+        debugPrint('WebSynth error: $e');
+      }
+    }
+  }
+
   void playClick() {
     if (_isMuted) return;
     try {
@@ -108,43 +119,43 @@ class AudioService {
     }
   }
 
-  void playStationSound(String categoryId) {
+  void playStationSound(String categoryId, {int stepIndex = 0}) {
     if (_isMuted) return;
     try {
       HapticFeedback.lightImpact();
       switch (categoryId) {
         case 'fire':
-          _callWebSynth('playFireStationSound');
+          _callWebSynthWithArg('playFireStationSound', stepIndex);
           break;
         case 'electric':
-          _callWebSynth('playElectricStationSound');
+          _callWebSynthWithArg('playElectricStationSound', stepIndex);
           break;
         case 'heat':
-          _callWebSynth('playHeatStationSound');
+          _callWebSynthWithArg('playHeatStationSound', stepIndex);
           break;
         case 'flood':
-          _callWebSynth('playFloodStationSound');
+          _callWebSynthWithArg('playFloodStationSound', stepIndex);
           break;
         case 'traffic':
-          _callWebSynth('playTrafficStationSound');
+          _callWebSynthWithArg('playTrafficStationSound', stepIndex);
           break;
         case 'cyber':
         case 'cyber_safety':
-          _callWebSynth('playCyberStationSound');
+          _callWebSynthWithArg('playCyberStationSound', stepIndex);
           break;
         case 'desert':
         case 'desert_safety':
-          _callWebSynth('playDesertStationSound');
+          _callWebSynthWithArg('playDesertStationSound', stepIndex);
           break;
         case 'evacuation':
-          _callWebSynth('playEvacuationStationSound');
+          _callWebSynthWithArg('playEvacuationStationSound', stepIndex);
           break;
         case 'home':
-          _callWebSynth('playHomeStationSound');
+          _callWebSynthWithArg('playHomeStationSound', stepIndex);
           break;
         case 'emergency_kit':
         default:
-          _callWebSynth('playKitStationSound');
+          _callWebSynthWithArg('playKitStationSound', stepIndex);
           break;
       }
     } catch (e) {

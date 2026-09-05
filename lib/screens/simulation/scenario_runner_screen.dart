@@ -254,7 +254,7 @@ class _ScenarioRunnerScreenState extends State<ScenarioRunnerScreen> {
     if (scenario != null && simProvider.currentStepIndex != _lastPlayedStepIndex) {
       _lastPlayedStepIndex = simProvider.currentStepIndex;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        AudioService.instance.playStationSound(scenario.categoryId);
+        AudioService.instance.playStationSound(scenario.categoryId, stepIndex: simProvider.currentStepIndex);
       });
     }
 
