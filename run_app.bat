@@ -1,12 +1,14 @@
 @echo off
-title Saudi Ready 911 - جاهز السعودية
 chcp 65001 > nul
+title Saudi Ready 911
 echo ============================================================
-echo           🇸🇦 جاهز السعودية - SAUDI READY 911 🇸🇦
-echo           تطبيق المحاكاة والجاهزية للطوارئ - 100%% Offline
+echo           SAUDI READY 911 - EMERGENCY SIMULATOR
 echo ============================================================
 echo.
-echo جاري بدء تشغيل التطبيق على متصفح Chrome...
+echo Launching Saudi Ready on Chrome (Audio Enabled)...
 cd /d "%~dp0"
-flutter run -d chrome
+flutter run -d chrome --web-browser-flag "--autoplay-policy=no-user-gesture-required"
 pause
+
+
+

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
@@ -27,6 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
   bool _hasNavigated = false;
   bool _hasProfile = false;
   bool _videoReady = false;
+  bool _isMuted = true;
   Timer? _fallbackTimer;
 
   @override
@@ -47,24 +49,26 @@ class _SplashScreenState extends State<SplashScreen> {
       debugPrint('SplashScreen: Asset Controller failed for $assetPath: $e');
     }
 
-    // 2. Try File Controller (Extract asset bytes to temporary file for native file handles)
-    try {
-      debugPrint('SplashScreen: Attempting File Controller fallback for $assetPath');
-      final byteData = await rootBundle.load(assetPath);
-      final tempDir = await getTemporaryDirectory();
-      final fileName = assetPath.split('/').last;
-      final tempFile = File('${tempDir.path}/$fileName');
+    // 2. Try File Controller fallback (Non-web native platforms only)
+    if (!kIsWeb) {
+      try {
+        debugPrint('SplashScreen: Attempting File Controller fallback for $assetPath');
+        final byteData = await rootBundle.load(assetPath);
+        final tempDir = await getTemporaryDirectory();
+        final fileName = assetPath.split('/').last;
+        final tempFile = File('${tempDir.path}/$fileName');
 
-      await tempFile.writeAsBytes(
-        byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes),
-        flush: true,
-      );
+        await tempFile.writeAsBytes(
+          byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes),
+          flush: true,
+        );
 
-      final controller = VideoPlayerController.file(tempFile);
-      await controller.initialize().timeout(const Duration(seconds: 4));
-      return controller;
-    } catch (e) {
-      debugPrint('SplashScreen: File Controller fallback failed for $assetPath: $e');
+        final controller = VideoPlayerController.file(tempFile);
+        await controller.initialize().timeout(const Duration(seconds: 4));
+        return controller;
+      } catch (e) {
+        debugPrint('SplashScreen: File Controller fallback failed for $assetPath: $e');
+      }
     }
 
     return null;
@@ -86,6 +90,9 @@ class _SplashScreenState extends State<SplashScreen> {
       controller.addListener(_onVideoControllerUpdate);
 
       await controller.setLooping(false);
+
+      // Sound ON by default (Volume 1.0)
+      _isMuted = false;
       await controller.setVolume(1.0);
 
       if (!mounted) return;
@@ -109,7 +116,18 @@ class _SplashScreenState extends State<SplashScreen> {
 
     final val = _videoController!.value;
     if (val.hasError) {
-      debugPrint('SplashScreen Video Error: ${val.errorDescription}');
+      final err = val.errorDescription ?? '';
+      debugPrint('SplashScreen Video Error: $err');
+
+      // If browser Autoplay policy restricts unmuted playback without gesture:
+      if (err.contains('interact') || err.contains('NotAllowedError') || err.contains('play() failed')) {
+        _videoController!.removeListener(_onVideoControllerUpdate);
+        _videoController!.dispose();
+        _videoController = null;
+        _startMutedFallback();
+        return;
+      }
+
       _navigateToNextScreen();
       return;
     }
@@ -126,6 +144,27 @@ class _SplashScreenState extends State<SplashScreen> {
         val.duration > Duration.zero &&
         val.position >= val.duration &&
         !_hasNavigated) {
+      _navigateToNextScreen();
+    }
+  }
+
+  Future<void> _startMutedFallback() async {
+    try {
+      final controller = await _createController('assets/videos/lod_Scene.mp4');
+      if (controller != null && mounted) {
+        _videoController = controller;
+        controller.addListener(_onVideoControllerUpdate);
+        await controller.setLooping(false);
+        _isMuted = true;
+        await controller.setVolume(0.0);
+        setState(() {
+          _videoReady = true;
+        });
+        await controller.play();
+      } else {
+        _navigateToNextScreen();
+      }
+    } catch (e) {
       _navigateToNextScreen();
     }
   }
@@ -187,127 +226,114 @@ class _SplashScreenState extends State<SplashScreen> {
         _videoController!.value.isInitialized;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF001A0D),
+      backgroundColor: Colors.black,
       body: Stack(
         alignment: Alignment.center,
         children: [
           // 1. FULL-SCREEN VIDEO PLAYER WHEN READY
           if (isPlayingVideo)
             Positioned.fill(
-              child: FittedBox(
-                fit: BoxFit.cover,
-                child: SizedBox(
-                  width: _videoController!.value.size.width > 0
-                      ? _videoController!.value.size.width
-                      : 1280,
-                  height: _videoController!.value.size.height > 0
-                      ? _videoController!.value.size.height
-                      : 720,
-                  child: VideoPlayer(_videoController!),
+              child: GestureDetector(
+                onTap: () {
+                  if (_videoController != null) {
+                    setState(() {
+                      _isMuted = !_isMuted;
+                      _videoController!.setVolume(_isMuted ? 0.0 : 1.0);
+                    });
+                  }
+                },
+                child: FittedBox(
+                  fit: BoxFit.cover,
+                  child: SizedBox(
+                    width: _videoController!.value.size.width > 0
+                        ? _videoController!.value.size.width
+                        : 1280,
+                    height: _videoController!.value.size.height > 0
+                        ? _videoController!.value.size.height
+                        : 720,
+                    child: VideoPlayer(_videoController!),
+                  ),
                 ),
               ),
             )
           else
-            // Elegant Splash Background while loading or if video fails
+            // Pure black background while video initializes
             Positioned.fill(
               child: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topRight,
-                    end: Alignment.bottomLeft,
-                    colors: [
-                      Color(0xFF0E8A49),
-                      Color(0xFF004D25),
-                      Color(0xFF001A0D),
-                    ],
-                  ),
-                ),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 110,
-                        height: 110,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFF00FF7F).withOpacity(0.4),
-                              blurRadius: 30,
-                              spreadRadius: 4,
-                            ),
-                          ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(55),
-                          child: NanoImageWidget(
-                            imageSource: NanoBananaAssets.logo,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      const Text(
-                        'جاهز للطوارئ',
-                        style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      const SizedBox(
-                        width: 28,
-                        height: 28,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
-                          color: AppColors.secondaryLight,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                color: Colors.black,
               ),
             ),
 
-          // 2. SKIP BUTTON TOP CORNER
+          // 2. TOP CONTROLS (SKIP & AUDIO TOGGLE)
           Positioned(
             top: MediaQuery.of(context).padding.top + 16,
-            left: isAr ? 20 : null,
-            right: isAr ? null : 20,
-            child: GestureDetector(
-              onTap: _navigateToNextScreen,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.55),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.white.withOpacity(0.3)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      isAr ? 'تخطي' : 'Skip',
-                      style: const TextStyle(
+            left: 20,
+            right: 20,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Sound Toggle Button when video is playing
+                if (isPlayingVideo)
+                  GestureDetector(
+                    onTap: () {
+                      if (_videoController != null) {
+                        setState(() {
+                          _isMuted = !_isMuted;
+                          _videoController!.setVolume(_isMuted ? 0.0 : 1.0);
+                        });
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.55),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white.withOpacity(0.3)),
+                      ),
+                      child: Icon(
+                        _isMuted ? Icons.volume_off_rounded : Icons.volume_up_rounded,
                         color: Colors.white,
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
+                        size: 18,
                       ),
                     ),
-                    const SizedBox(width: 4),
-                    Icon(
-                      isAr
-                          ? Icons.arrow_back_ios_new_rounded
-                          : Icons.arrow_forward_ios_rounded,
-                      color: Colors.white,
-                      size: 12,
+                  )
+                else
+                  const SizedBox.shrink(),
+
+                // Skip Button
+                GestureDetector(
+                  onTap: _navigateToNextScreen,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.55),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.white.withOpacity(0.3)),
                     ),
-                  ],
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          isAr ? 'تخطي' : 'Skip',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          isAr
+                              ? Icons.arrow_back_ios_new_rounded
+                              : Icons.arrow_forward_ios_rounded,
+                          color: Colors.white,
+                          size: 12,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ],
