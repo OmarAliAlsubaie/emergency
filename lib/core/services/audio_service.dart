@@ -129,8 +129,10 @@ class AudioService {
           _callWebSynth('playTrafficStationSound');
           break;
         case 'cyber':
+        case 'cyber_safety':
           _callWebSynth('playCyberStationSound');
           break;
+        case 'desert':
         case 'desert_safety':
           _callWebSynth('playDesertStationSound');
           break;
