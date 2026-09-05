@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'audio_synth_helper.dart';
 
 class AudioService {
   static final AudioService instance = AudioService._init();
@@ -17,6 +18,7 @@ class AudioService {
     try {
       HapticFeedback.selectionClick();
       SystemSound.play(SystemSoundType.click);
+      playWebClick();
     } catch (e) {
       debugPrint('Audio click error: $e');
     }
@@ -27,6 +29,7 @@ class AudioService {
     try {
       HapticFeedback.mediumImpact();
       SystemSound.play(SystemSoundType.click);
+      playWebSuccess();
     } catch (e) {
       debugPrint('Audio success error: $e');
     }
@@ -36,6 +39,8 @@ class AudioService {
     if (_isMuted) return;
     try {
       HapticFeedback.heavyImpact();
+      SystemSound.play(SystemSoundType.alert);
+      playWebError();
     } catch (e) {
       debugPrint('Audio error: $e');
     }
@@ -55,6 +60,7 @@ class AudioService {
     try {
       HapticFeedback.vibrate();
       SystemSound.play(SystemSoundType.alert);
+      playWebSiren();
     } catch (e) {
       debugPrint('Audio siren error: $e');
     }
@@ -64,6 +70,7 @@ class AudioService {
     if (_isMuted) return;
     try {
       HapticFeedback.heavyImpact();
+      playWebZap();
     } catch (e) {
       debugPrint('Audio zap error: $e');
     }
@@ -73,6 +80,7 @@ class AudioService {
     if (_isMuted) return;
     try {
       HapticFeedback.mediumImpact();
+      playWebHeartbeat();
     } catch (e) {
       debugPrint('Audio heartbeat error: $e');
     }
@@ -83,11 +91,9 @@ class AudioService {
     try {
       HapticFeedback.heavyImpact();
       SystemSound.play(SystemSoundType.click);
+      playWebLevelUp();
     } catch (e) {
       debugPrint('Audio celebration error: $e');
     }
   }
 }
-
-
-

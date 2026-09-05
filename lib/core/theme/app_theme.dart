@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
 class AppTheme {
@@ -6,7 +7,7 @@ class AppTheme {
     final isArabic = localeCode == 'ar';
     const fontFamily = 'Tajawal';
 
-    final textTheme = TextTheme(
+    final baseTextTheme = TextTheme(
       displayLarge: TextStyle(
         fontFamily: fontFamily,
         fontSize: 32,
@@ -14,57 +15,57 @@ class AppTheme {
         color: AppColors.textPrimaryLight,
         letterSpacing: isArabic ? 0 : -0.5,
       ),
-      displayMedium: TextStyle(
+      displayMedium: const TextStyle(
         fontFamily: fontFamily,
         fontSize: 26,
         fontWeight: FontWeight.w700,
         color: AppColors.textPrimaryLight,
       ),
-      displaySmall: TextStyle(
+      displaySmall: const TextStyle(
         fontFamily: fontFamily,
         fontSize: 22,
         fontWeight: FontWeight.w700,
         color: AppColors.textPrimaryLight,
       ),
-      headlineMedium: TextStyle(
+      headlineMedium: const TextStyle(
         fontFamily: fontFamily,
         fontSize: 20,
         fontWeight: FontWeight.w700,
         color: AppColors.textPrimaryLight,
       ),
-      headlineSmall: TextStyle(
+      headlineSmall: const TextStyle(
         fontFamily: fontFamily,
         fontSize: 18,
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimaryLight,
       ),
-      titleLarge: TextStyle(
+      titleLarge: const TextStyle(
         fontFamily: fontFamily,
         fontSize: 17,
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimaryLight,
       ),
-      titleMedium: TextStyle(
+      titleMedium: const TextStyle(
         fontFamily: fontFamily,
         fontSize: 15,
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimaryLight,
       ),
-      bodyLarge: TextStyle(
+      bodyLarge: const TextStyle(
         fontFamily: fontFamily,
         fontSize: 15,
         fontWeight: FontWeight.w400,
         color: AppColors.textPrimaryLight,
         height: 1.5,
       ),
-      bodyMedium: TextStyle(
+      bodyMedium: const TextStyle(
         fontFamily: fontFamily,
         fontSize: 13.5,
         fontWeight: FontWeight.w400,
         color: AppColors.textSecondaryLight,
         height: 1.4,
       ),
-      labelLarge: TextStyle(
+      labelLarge: const TextStyle(
         fontFamily: fontFamily,
         fontSize: 14,
         fontWeight: FontWeight.w600,
@@ -72,10 +73,13 @@ class AppTheme {
       ),
     );
 
+    final textTheme = GoogleFonts.tajawalTextTheme(baseTextTheme);
+
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
       primaryColor: AppColors.primary,
+      fontFamily: GoogleFonts.tajawal().fontFamily,
       scaffoldBackgroundColor: AppColors.backgroundLight,
       colorScheme: const ColorScheme.light(
         primary: AppColors.primary,
@@ -90,14 +94,13 @@ class AppTheme {
         onError: Colors.white,
       ),
       textTheme: textTheme,
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
-        iconTheme: IconThemeData(color: AppColors.textPrimaryLight),
-        titleTextStyle: TextStyle(
-          fontFamily: fontFamily,
+        iconTheme: const IconThemeData(color: AppColors.textPrimaryLight),
+        titleTextStyle: GoogleFonts.tajawal(
           fontSize: 19,
           fontWeight: FontWeight.w700,
           color: AppColors.textPrimaryLight,
@@ -121,8 +124,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
-          textStyle: const TextStyle(
-            fontFamily: fontFamily,
+          textStyle: GoogleFonts.tajawal(
             fontSize: 16,
             fontWeight: FontWeight.w700,
           ),
@@ -136,8 +138,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
-          textStyle: const TextStyle(
-            fontFamily: fontFamily,
+          textStyle: GoogleFonts.tajawal(
             fontSize: 15,
             fontWeight: FontWeight.w600,
           ),
@@ -160,19 +161,17 @@ class AppTheme {
           borderSide: const BorderSide(color: AppColors.primary, width: 1.8),
         ),
       ),
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: Colors.white,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: AppColors.textTertiaryLight,
         type: BottomNavigationBarType.fixed,
         elevation: 8,
-        selectedLabelStyle: TextStyle(
-          fontFamily: fontFamily,
+        selectedLabelStyle: GoogleFonts.tajawal(
           fontSize: 12,
           fontWeight: FontWeight.w700,
         ),
-        unselectedLabelStyle: TextStyle(
-          fontFamily: fontFamily,
+        unselectedLabelStyle: GoogleFonts.tajawal(
           fontSize: 11,
           fontWeight: FontWeight.w500,
         ),
@@ -189,7 +188,7 @@ class AppTheme {
     final isArabic = localeCode == 'ar';
     const fontFamily = 'Tajawal';
 
-    final textTheme = TextTheme(
+    final baseTextTheme = TextTheme(
       displayLarge: TextStyle(
         fontFamily: fontFamily,
         fontSize: 32,
@@ -197,57 +196,57 @@ class AppTheme {
         color: AppColors.textPrimaryDark,
         letterSpacing: isArabic ? 0 : -0.5,
       ),
-      displayMedium: TextStyle(
+      displayMedium: const TextStyle(
         fontFamily: fontFamily,
         fontSize: 26,
         fontWeight: FontWeight.w700,
         color: AppColors.textPrimaryDark,
       ),
-      displaySmall: TextStyle(
+      displaySmall: const TextStyle(
         fontFamily: fontFamily,
         fontSize: 22,
         fontWeight: FontWeight.w700,
         color: AppColors.textPrimaryDark,
       ),
-      headlineMedium: TextStyle(
+      headlineMedium: const TextStyle(
         fontFamily: fontFamily,
         fontSize: 20,
         fontWeight: FontWeight.w700,
         color: AppColors.textPrimaryDark,
       ),
-      headlineSmall: TextStyle(
+      headlineSmall: const TextStyle(
         fontFamily: fontFamily,
         fontSize: 18,
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimaryDark,
       ),
-      titleLarge: TextStyle(
+      titleLarge: const TextStyle(
         fontFamily: fontFamily,
         fontSize: 17,
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimaryDark,
       ),
-      titleMedium: TextStyle(
+      titleMedium: const TextStyle(
         fontFamily: fontFamily,
         fontSize: 15,
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimaryDark,
       ),
-      bodyLarge: TextStyle(
+      bodyLarge: const TextStyle(
         fontFamily: fontFamily,
         fontSize: 15,
         fontWeight: FontWeight.w400,
         color: AppColors.textPrimaryDark,
         height: 1.5,
       ),
-      bodyMedium: TextStyle(
+      bodyMedium: const TextStyle(
         fontFamily: fontFamily,
         fontSize: 13.5,
         fontWeight: FontWeight.w400,
         color: AppColors.textSecondaryDark,
         height: 1.4,
       ),
-      labelLarge: TextStyle(
+      labelLarge: const TextStyle(
         fontFamily: fontFamily,
         fontSize: 14,
         fontWeight: FontWeight.w600,
@@ -255,10 +254,13 @@ class AppTheme {
       ),
     );
 
+    final textTheme = GoogleFonts.tajawalTextTheme(baseTextTheme);
+
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
       primaryColor: AppColors.primaryLight,
+      fontFamily: GoogleFonts.tajawal().fontFamily,
       scaffoldBackgroundColor: AppColors.backgroundDark,
       colorScheme: const ColorScheme.dark(
         primary: AppColors.primaryLight,
@@ -273,14 +275,13 @@ class AppTheme {
         onError: Colors.white,
       ),
       textTheme: textTheme,
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
-        iconTheme: IconThemeData(color: AppColors.textPrimaryDark),
-        titleTextStyle: TextStyle(
-          fontFamily: fontFamily,
+        iconTheme: const IconThemeData(color: AppColors.textPrimaryDark),
+        titleTextStyle: GoogleFonts.tajawal(
           fontSize: 19,
           fontWeight: FontWeight.w700,
           color: AppColors.textPrimaryDark,
@@ -304,8 +305,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
-          textStyle: const TextStyle(
-            fontFamily: fontFamily,
+          textStyle: GoogleFonts.tajawal(
             fontSize: 16,
             fontWeight: FontWeight.w700,
           ),
@@ -319,8 +319,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
-          textStyle: const TextStyle(
-            fontFamily: fontFamily,
+          textStyle: GoogleFonts.tajawal(
             fontSize: 15,
             fontWeight: FontWeight.w600,
           ),
@@ -343,19 +342,17 @@ class AppTheme {
           borderSide: const BorderSide(color: AppColors.primaryLight, width: 1.8),
         ),
       ),
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: AppColors.surfaceDark,
         selectedItemColor: AppColors.primaryLight,
         unselectedItemColor: AppColors.textTertiaryDark,
         type: BottomNavigationBarType.fixed,
         elevation: 8,
-        selectedLabelStyle: TextStyle(
-          fontFamily: fontFamily,
+        selectedLabelStyle: GoogleFonts.tajawal(
           fontSize: 12,
           fontWeight: FontWeight.w700,
         ),
-        unselectedLabelStyle: TextStyle(
-          fontFamily: fontFamily,
+        unselectedLabelStyle: GoogleFonts.tajawal(
           fontSize: 11,
           fontWeight: FontWeight.w500,
         ),
