@@ -32,6 +32,157 @@
   <title>saudi_ready</title>
   <link rel="manifest" href="manifest.json">
 
+  <!-- Web Audio Synthesizer for Emergency Sound Effects & Haptics -->
+  <script>
+    window.EmergencyAudioSynth = (function() {
+      var audioCtx = null;
+      function getContext() {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        return audioCtx;
+      }
+
+      return {
+        playSiren: function() {
+          try {
+            var ctx = getContext();
+            var osc = ctx.createOscillator();
+            var gain = ctx.createGain();
+            osc.type = 'sawtooth';
+            var now = ctx.currentTime;
+            osc.frequency.setValueAtTime(600, now);
+            osc.frequency.linearRampToValueAtTime(1200, now + 0.4);
+            osc.frequency.linearRampToValueAtTime(600, now + 0.8);
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.85);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.85);
+          } catch(e) {}
+        },
+
+        playAlarm: function() {
+          try {
+            var ctx = getContext();
+            var now = ctx.currentTime;
+            [0, 0.15, 0.3].forEach(function(delay) {
+              var osc = ctx.createOscillator();
+              var gain = ctx.createGain();
+              osc.type = 'square';
+              osc.frequency.setValueAtTime(880, now + delay);
+              gain.gain.setValueAtTime(0.2, now + delay);
+              gain.gain.exponentialRampToValueAtTime(0.01, now + delay + 0.1);
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.start(now + delay);
+              osc.stop(now + delay + 0.1);
+            });
+          } catch(e) {}
+        },
+
+        playZap: function() {
+          try {
+            var ctx = getContext();
+            var osc = ctx.createOscillator();
+            var gain = ctx.createGain();
+            osc.type = 'sawtooth';
+            var now = ctx.currentTime;
+            osc.frequency.setValueAtTime(1500, now);
+            osc.frequency.exponentialRampToValueAtTime(80, now + 0.25);
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.25);
+          } catch(e) {}
+        },
+
+        playHeartbeat: function() {
+          try {
+            var ctx = getContext();
+            var now = ctx.currentTime;
+            [0, 0.18].forEach(function(delay, i) {
+              var osc = ctx.createOscillator();
+              var gain = ctx.createGain();
+              osc.type = 'sine';
+              osc.frequency.setValueAtTime(i === 0 ? 70 : 55, now + delay);
+              gain.gain.setValueAtTime(0.4, now + delay);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.12);
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.start(now + delay);
+              osc.stop(now + delay + 0.12);
+            });
+          } catch(e) {}
+        },
+
+        playSuccess: function() {
+          try {
+            var ctx = getContext();
+            var now = ctx.currentTime;
+            var notes = [523.25, 659.25, 783.99, 1046.50];
+            notes.forEach(function(freq, i) {
+              var osc = ctx.createOscillator();
+              var gain = ctx.createGain();
+              osc.type = 'triangle';
+              osc.frequency.setValueAtTime(freq, now + i * 0.08);
+              gain.gain.setValueAtTime(0.25, now + i * 0.08);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.3);
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.start(now + i * 0.08);
+              osc.stop(now + i * 0.08 + 0.3);
+            });
+          } catch(e) {}
+        },
+
+        playError: function() {
+          try {
+            var ctx = getContext();
+            var now = ctx.currentTime;
+            var notes = [440, 311.13];
+            notes.forEach(function(freq, i) {
+              var osc = ctx.createOscillator();
+              var gain = ctx.createGain();
+              osc.type = 'sawtooth';
+              osc.frequency.setValueAtTime(freq, now + i * 0.12);
+              gain.gain.setValueAtTime(0.25, now + i * 0.12);
+              gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.12 + 0.25);
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.start(now + i * 0.12);
+              osc.stop(now + i * 0.12 + 0.25);
+            });
+          } catch(e) {}
+        },
+
+        playClick: function() {
+          try {
+            var ctx = getContext();
+            var osc = ctx.createOscillator();
+            var gain = ctx.createGain();
+            osc.type = 'sine';
+            var now = ctx.currentTime;
+            osc.frequency.setValueAtTime(1000, now);
+            osc.frequency.exponentialRampToValueAtTime(200, now + 0.04);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.04);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.04);
+          } catch(e) {}
+        }
+      };
+    })();
+  </script>
+
   <script>
     // The value below is injected by flutter build, do not touch.
     const serviceWorkerVersion = null;
