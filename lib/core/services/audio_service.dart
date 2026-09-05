@@ -39,8 +39,6 @@ class AudioService {
     if (_isMuted) return;
     try {
       HapticFeedback.selectionClick();
-      SystemSound.play(SystemSoundType.click);
-      _callWebSynth('playClick');
     } catch (e) {
       debugPrint('Audio click error: $e');
     }
@@ -50,8 +48,6 @@ class AudioService {
     if (_isMuted) return;
     try {
       HapticFeedback.mediumImpact();
-      SystemSound.play(SystemSoundType.click);
-      _callWebSynth('playSuccess');
     } catch (e) {
       debugPrint('Audio success error: $e');
     }
@@ -61,7 +57,6 @@ class AudioService {
     if (_isMuted) return;
     try {
       HapticFeedback.heavyImpact();
-      _callWebSynth('playError');
     } catch (e) {
       debugPrint('Audio error: $e');
     }
@@ -71,7 +66,6 @@ class AudioService {
     if (_isMuted) return;
     try {
       HapticFeedback.lightImpact();
-      _callWebSynth('playClick');
     } catch (e) {
       debugPrint('Audio timer tick error: $e');
     }
@@ -81,8 +75,6 @@ class AudioService {
     if (_isMuted) return;
     try {
       HapticFeedback.vibrate();
-      SystemSound.play(SystemSoundType.alert);
-      _callWebSynth('playSiren');
     } catch (e) {
       debugPrint('Audio siren error: $e');
     }
@@ -92,7 +84,6 @@ class AudioService {
     if (_isMuted) return;
     try {
       HapticFeedback.heavyImpact();
-      _callWebSynth('playZap');
     } catch (e) {
       debugPrint('Audio zap error: $e');
     }
@@ -102,7 +93,6 @@ class AudioService {
     if (_isMuted) return;
     try {
       HapticFeedback.mediumImpact();
-      _callWebSynth('playHeartbeat');
     } catch (e) {
       debugPrint('Audio heartbeat error: $e');
     }
@@ -112,8 +102,6 @@ class AudioService {
     if (_isMuted) return;
     try {
       HapticFeedback.heavyImpact();
-      SystemSound.play(SystemSoundType.click);
-      _callWebSynth('playSuccess');
     } catch (e) {
       debugPrint('Audio celebration error: $e');
     }
