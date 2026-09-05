@@ -39,6 +39,7 @@ class AudioService {
     if (_isMuted) return;
     try {
       HapticFeedback.selectionClick();
+      _callWebSynth('playClick');
     } catch (e) {
       debugPrint('Audio click error: $e');
     }
@@ -48,6 +49,7 @@ class AudioService {
     if (_isMuted) return;
     try {
       HapticFeedback.mediumImpact();
+      _callWebSynth('playSuccess');
     } catch (e) {
       debugPrint('Audio success error: $e');
     }
@@ -57,6 +59,7 @@ class AudioService {
     if (_isMuted) return;
     try {
       HapticFeedback.heavyImpact();
+      _callWebSynth('playError');
     } catch (e) {
       debugPrint('Audio error: $e');
     }

@@ -68,9 +68,63 @@
         playAlarm: function() {},
         playZap: function() {},
         playHeartbeat: function() {},
-        playSuccess: function() {},
-        playError: function() {},
-        playClick: function() {},
+
+        // Organic Natural UI Sound Effects (0% Music, 0% Ringtones)
+        playSuccess: function() {
+          try {
+            var ctx = getContext();
+            var now = ctx.currentTime;
+            [0, 0.05].forEach(function(delay) {
+              var osc = ctx.createOscillator();
+              var gain = ctx.createGain();
+              osc.type = 'sine';
+              osc.frequency.setValueAtTime(520, now + delay);
+              osc.frequency.exponentialRampToValueAtTime(840, now + delay + 0.04);
+              gain.gain.setValueAtTime(0.18, now + delay);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.04);
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.start(now + delay);
+              osc.stop(now + delay + 0.04);
+            });
+          } catch(e) {}
+        },
+
+        playError: function() {
+          try {
+            var ctx = getContext();
+            var now = ctx.currentTime;
+            var osc = ctx.createOscillator();
+            var gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(180, now);
+            osc.frequency.exponentialRampToValueAtTime(90, now + 0.08);
+            gain.gain.setValueAtTime(0.22, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.08);
+          } catch(e) {}
+        },
+
+        playClick: function() {
+          try {
+            var ctx = getContext();
+            var now = ctx.currentTime;
+            var osc = ctx.createOscillator();
+            var gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, now);
+            osc.frequency.exponentialRampToValueAtTime(250, now + 0.02);
+            gain.gain.setValueAtTime(0.12, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.02);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.02);
+          } catch(e) {}
+        },
 
         // =========================================================================
         // REAL HIGH-QUALITY AUDIO MP3 PLAYERS FOR ALL 10 EMERGENCY CATEGORIES
