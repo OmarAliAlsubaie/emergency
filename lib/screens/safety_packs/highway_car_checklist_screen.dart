@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/services/audio_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../widgets/custom_card.dart';
 
@@ -177,6 +178,11 @@ class _HighwayCarChecklistScreenState extends State<HighwayCarChecklistScreen> {
                   onTap: () {
                     setState(() {
                       item.isChecked = !item.isChecked;
+                      if (item.isChecked) {
+                        AudioService.instance.playSuccess();
+                      } else {
+                        AudioService.instance.playClick();
+                      }
                     });
                   },
                   child: Row(
@@ -187,6 +193,11 @@ class _HighwayCarChecklistScreenState extends State<HighwayCarChecklistScreen> {
                         onChanged: (val) {
                           setState(() {
                             item.isChecked = val ?? false;
+                            if (item.isChecked) {
+                              AudioService.instance.playSuccess();
+                            } else {
+                              AudioService.instance.playClick();
+                            }
                           });
                         },
                       ),

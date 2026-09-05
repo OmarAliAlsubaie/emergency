@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/services/audio_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../widgets/custom_card.dart';
 
@@ -343,6 +344,11 @@ class _HomeSafetyInspectorScreenState extends State<HomeSafetyInspectorScreen> w
             onTap: () {
               setState(() {
                 item.isChecked = !item.isChecked;
+                if (item.isChecked) {
+                  AudioService.instance.playSuccess();
+                } else {
+                  AudioService.instance.playClick();
+                }
               });
             },
             child: Row(
@@ -353,6 +359,11 @@ class _HomeSafetyInspectorScreenState extends State<HomeSafetyInspectorScreen> w
                   onChanged: (val) {
                     setState(() {
                       item.isChecked = val ?? false;
+                      if (item.isChecked) {
+                        AudioService.instance.playSuccess();
+                      } else {
+                        AudioService.instance.playClick();
+                      }
                     });
                   },
                 ),
