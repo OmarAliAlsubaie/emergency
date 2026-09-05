@@ -180,36 +180,63 @@
           } catch(e) {}
         },
 
-        // Category Station Themed Audio Synthesizers (3-Second Auditory Immersion)
+        // =========================================================================
+        // CONTINUOUS 60+ SECONDS CATEGORY STATION AMBIANCE (INFINITE LOOPING)
+        // =========================================================================
+        stopStationAmbiance: function() {
+          if (window._activeStationNodes) {
+            window._activeStationNodes.forEach(function(node) {
+              try { node.stop(); node.disconnect(); } catch(e){}
+            });
+          }
+          window._activeStationNodes = [];
+        },
+
+        _addNode: function(node) {
+          if (!window._activeStationNodes) window._activeStationNodes = [];
+          window._activeStationNodes.push(node);
+        },
+
         playFireStationSound: function() {
+          this.stopStationAmbiance();
           try {
             var ctx = getContext();
             if (ctx.state === 'suspended') ctx.resume();
             var now = ctx.currentTime;
+
+            // 60s Siren Sweep Loop
             var osc = ctx.createOscillator();
             var gain = ctx.createGain();
             osc.type = 'sawtooth';
             osc.frequency.setValueAtTime(650, now);
-            osc.frequency.linearRampToValueAtTime(1300, now + 0.7);
-            osc.frequency.linearRampToValueAtTime(650, now + 1.4);
-            osc.frequency.linearRampToValueAtTime(1300, now + 2.1);
-            osc.frequency.linearRampToValueAtTime(650, now + 2.8);
             gain.gain.setValueAtTime(0.35, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 3.0);
+
+            // Oscillate siren pitch back and forth continuously
+            var lfo = ctx.createOscillator();
+            var lfoGain = ctx.createGain();
+            lfo.frequency.setValueAtTime(0.8, now); // 0.8 Hz siren cycle
+            lfoGain.gain.setValueAtTime(350, now);
+            lfo.connect(osc.frequency);
+            lfo.start(now);
+
             osc.connect(gain);
             gain.connect(ctx.destination);
             osc.start(now);
-            osc.stop(now + 3.0);
+
+            this._addNode(osc);
+            this._addNode(lfo);
           } catch(e) {}
         },
+
         playFloodStationSound: function() {
+          this.stopStationAmbiance();
           try {
             var ctx = getContext();
             if (ctx.state === 'suspended') ctx.resume();
             var now = ctx.currentTime;
 
-            // 1. Water Torrent Roar (Low-pass filtered White Noise)
-            var bufferSize = ctx.sampleRate * 3.0;
+            // 1. Continuous Roaring Water Noise (60+ Seconds Infinite Loop)
+            var bufferSize = ctx.sampleRate * 5.0;
             var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
             var data = buffer.getChannelData(0);
             for (var i = 0; i < bufferSize; i++) {
@@ -218,149 +245,211 @@
 
             var noise = ctx.createBufferSource();
             noise.buffer = buffer;
+            noise.loop = true; // INFINITE CONTINUOUS LOOP FOR FULL STATION DURATION
 
             var filter = ctx.createBiquadFilter();
             filter.type = 'lowpass';
-            filter.frequency.setValueAtTime(350, now);
-            filter.frequency.linearRampToValueAtTime(750, now + 1.5);
-            filter.frequency.linearRampToValueAtTime(300, now + 3.0);
+            filter.frequency.setValueAtTime(450, now);
+
+            // Modulate filter for realistic water surge
+            var lfo = ctx.createOscillator();
+            var lfoGain = ctx.createGain();
+            lfo.frequency.setValueAtTime(0.3, now);
+            lfoGain.gain.setValueAtTime(200, now);
+            lfo.connect(filter.frequency);
+            lfo.start(now);
 
             var gain = ctx.createGain();
-            gain.gain.setValueAtTime(0.4, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 3.0);
+            gain.gain.setValueAtTime(0.40, now); // LOUD AND CLEAR WATER SOUND
 
             noise.connect(filter);
             filter.connect(gain);
             gain.connect(ctx.destination);
             noise.start(now);
 
-            // 2. Secondary Water Wave Oscillations
-            var osc = ctx.createOscillator();
-            var oscGain = ctx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(140, now);
-            osc.frequency.linearRampToValueAtTime(280, now + 1.5);
-            osc.frequency.linearRampToValueAtTime(120, now + 3.0);
-
-            oscGain.gain.setValueAtTime(0.35, now);
-            oscGain.gain.exponentialRampToValueAtTime(0.01, now + 3.0);
-
-            osc.connect(oscGain);
-            oscGain.connect(ctx.destination);
-            osc.start(now);
-            osc.stop(now + 3.0);
-          } catch(e) {}
+            this._addNode(noise);
+            this._addNode(lfo);
+          } catch(e) { console.error(e); }
         },
+
         playElectricStationSound: function() {
+          this.stopStationAmbiance();
           try {
             var ctx = getContext();
             if (ctx.state === 'suspended') ctx.resume();
             var now = ctx.currentTime;
+
             var osc = ctx.createOscillator();
             var gain = ctx.createGain();
             osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(1600, now);
-            osc.frequency.exponentialRampToValueAtTime(100, now + 1.5);
-            osc.frequency.setValueAtTime(1400, now + 1.6);
-            osc.frequency.exponentialRampToValueAtTime(80, now + 3.0);
-            gain.gain.setValueAtTime(0.4, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 3.0);
+            osc.frequency.setValueAtTime(120, now); // 120Hz Mains Electrical Buzz
+
+            var lfo = ctx.createOscillator();
+            var lfoGain = ctx.createGain();
+            lfo.type = 'square';
+            lfo.frequency.setValueAtTime(12, now);
+            lfoGain.gain.setValueAtTime(40, now);
+            lfo.connect(osc.frequency);
+            lfo.start(now);
+
+            gain.gain.setValueAtTime(0.35, now);
+
             osc.connect(gain);
             gain.connect(ctx.destination);
             osc.start(now);
-            osc.stop(now + 3.0);
+
+            this._addNode(osc);
+            this._addNode(lfo);
           } catch(e) {}
         },
+
         playHeatStationSound: function() {
+          this.stopStationAmbiance();
           try {
             var ctx = getContext();
             if (ctx.state === 'suspended') ctx.resume();
             var now = ctx.currentTime;
-            [0, 0.7, 1.4, 2.1].forEach(function(startT) {
-              [0, 0.2].forEach(function(delay, i) {
-                var osc = ctx.createOscillator();
-                var gain = ctx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(i === 0 ? 80 : 60, now + startT + delay);
-                gain.gain.setValueAtTime(0.45, now + startT + delay);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + startT + delay + 0.15);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start(now + startT + delay);
-                osc.stop(now + startT + delay + 0.15);
-              });
-            });
+
+            // Continuous Heartbeat Pulses Generator
+            var self = this;
+            var heartbeatInterval = setInterval(function() {
+              if (!window._activeStationNodes || window._activeStationNodes.length === 0) {
+                clearInterval(heartbeatInterval);
+                return;
+              }
+              try {
+                var nowT = ctx.currentTime;
+                [0, 0.18].forEach(function(delay, i) {
+                  var osc = ctx.createOscillator();
+                  var gain = ctx.createGain();
+                  osc.type = 'sine';
+                  osc.frequency.setValueAtTime(i === 0 ? 75 : 55, nowT + delay);
+                  gain.gain.setValueAtTime(0.45, nowT + delay);
+                  gain.gain.exponentialRampToValueAtTime(0.001, nowT + delay + 0.14);
+                  osc.connect(gain);
+                  gain.connect(ctx.destination);
+                  osc.start(nowT + delay);
+                  osc.stop(nowT + delay + 0.14);
+                });
+              } catch(e){}
+            }, 900);
+
+            // Dummy node to keep interval state active
+            var dummyOsc = ctx.createOscillator();
+            dummyOsc.start(now);
+            this._addNode(dummyOsc);
           } catch(e) {}
         },
+
         playTrafficStationSound: function() {
+          this.stopStationAmbiance();
           try {
             var ctx = getContext();
             if (ctx.state === 'suspended') ctx.resume();
             var now = ctx.currentTime;
+
             var osc = ctx.createOscillator();
             var gain = ctx.createGain();
             osc.type = 'triangle';
-            osc.frequency.setValueAtTime(450, now);
-            osc.frequency.linearRampToValueAtTime(900, now + 1.5);
-            osc.frequency.linearRampToValueAtTime(450, now + 3.0);
+            osc.frequency.setValueAtTime(440, now);
+
+            var lfo = ctx.createOscillator();
+            lfo.frequency.setValueAtTime(2.0, now);
+            var lfoGain = ctx.createGain();
+            lfoGain.gain.setValueAtTime(250, now);
+            lfo.connect(osc.frequency);
+            lfo.start(now);
+
             gain.gain.setValueAtTime(0.35, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 3.0);
+
             osc.connect(gain);
             gain.connect(ctx.destination);
             osc.start(now);
-            osc.stop(now + 3.0);
+
+            this._addNode(osc);
+            this._addNode(lfo);
           } catch(e) {}
         },
+
         playCyberStationSound: function() {
+          this.stopStationAmbiance();
           try {
             var ctx = getContext();
             if (ctx.state === 'suspended') ctx.resume();
             var now = ctx.currentTime;
-            var notes = [1200, 1600, 2000, 1400, 1800, 2200, 1000, 1500];
-            notes.forEach(function(freq, i) {
-              var osc = ctx.createOscillator();
-              var gain = ctx.createGain();
-              osc.type = 'square';
-              osc.frequency.setValueAtTime(freq, now + i * 0.15);
-              gain.gain.setValueAtTime(0.2, now + i * 0.15);
-              gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.15 + 0.1);
-              osc.connect(gain);
-              gain.connect(ctx.destination);
-              osc.start(now + i * 0.15);
-              osc.stop(now + i * 0.15 + 0.1);
-            });
+
+            var bufferSize = ctx.sampleRate * 2;
+            var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            var data = buffer.getChannelData(0);
+            for (var i = 0; i < bufferSize; i++) {
+              data[i] = (Math.random() - 0.5) * 0.2;
+            }
+
+            var noise = ctx.createBufferSource();
+            noise.buffer = buffer;
+            noise.loop = true;
+
+            var filter = ctx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(1500, now);
+            filter.Q.setValueAtTime(5.0, now);
+
+            var gain = ctx.createGain();
+            gain.gain.setValueAtTime(0.30, now);
+
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(ctx.destination);
+            noise.start(now);
+
+            this._addNode(noise);
           } catch(e) {}
         },
+
         playDesertStationSound: function() {
+          this.stopStationAmbiance();
           try {
             var ctx = getContext();
             if (ctx.state === 'suspended') ctx.resume();
             var now = ctx.currentTime;
-            var bufferSize = ctx.sampleRate * 3.0;
+
+            var bufferSize = ctx.sampleRate * 4;
             var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
             var data = buffer.getChannelData(0);
             for (var i = 0; i < bufferSize; i++) {
               data[i] = Math.random() * 2 - 1;
             }
+
             var noise = ctx.createBufferSource();
             noise.buffer = buffer;
+            noise.loop = true;
+
             var filter = ctx.createBiquadFilter();
             filter.type = 'bandpass';
-            filter.frequency.setValueAtTime(300, now);
-            filter.frequency.linearRampToValueAtTime(650, now + 1.5);
-            filter.frequency.linearRampToValueAtTime(250, now + 3.0);
-            filter.Q.setValueAtTime(3.0, now);
+            filter.frequency.setValueAtTime(350, now);
+
+            var lfo = ctx.createOscillator();
+            var lfoGain = ctx.createGain();
+            lfo.frequency.setValueAtTime(0.2, now);
+            lfoGain.gain.setValueAtTime(250, now);
+            lfo.connect(filter.frequency);
+            lfo.start(now);
+
             var gain = ctx.createGain();
-            gain.gain.setValueAtTime(0.4, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 3.0);
+            gain.gain.setValueAtTime(0.38, now);
+
             noise.connect(filter);
             filter.connect(gain);
             gain.connect(ctx.destination);
             noise.start(now);
+
+            this._addNode(noise);
+            this._addNode(lfo);
           } catch(e) {}
         },
+
         playEvacuationStationSound: function() { this.playFireStationSound(); },
-        playHomeStationSound: function() { this.playAlarm(); },
+        playHomeStationSound: function() { this.playElectricStationSound(); },
         playKitStationSound: function() { this.playSuccess(); }
       };
     })();

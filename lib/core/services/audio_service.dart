@@ -158,6 +158,10 @@ class AudioService {
       debugPrint('Audio station sound error: $e');
     }
   }
+
+  void stopStationSound() {
+    _callWebSynth('stopStationAmbiance');
+  }
 }
 
 

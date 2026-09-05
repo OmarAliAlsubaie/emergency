@@ -595,4 +595,10 @@ class _ScenarioRunnerScreenState extends State<ScenarioRunnerScreen> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    AudioService.instance.stopStationSound();
+    super.dispose();
+  }
 }
