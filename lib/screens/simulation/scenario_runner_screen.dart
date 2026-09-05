@@ -483,32 +483,6 @@ class _ScenarioRunnerScreenState extends State<ScenarioRunnerScreen> {
                                 height: 1.5,
                               ),
                             ),
-                            if (step.hintAr.isNotEmpty) ...[
-                              const SizedBox(height: 12),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.15),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(Icons.lightbulb, size: 14, color: AppColors.secondaryLight),
-                                    const SizedBox(width: 6),
-                                    Flexible(
-                                      child: Text(
-                                        loc.isArabic ? step.hintAr : step.hintEn,
-                                        style: TextStyle(
-                                          fontSize: 11.5,
-                                          color: Colors.white.withOpacity(0.9),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
                           ],
                         ),
                       ),
