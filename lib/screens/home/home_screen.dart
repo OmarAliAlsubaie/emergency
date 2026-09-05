@@ -24,22 +24,21 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final topPadding = MediaQuery.of(context).padding.top;
 
-    return Scaffold(
-      body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: () async {
-            final appState = Provider.of<AppStateProvider>(context, listen: false);
-            if (appState.activeProfile != null) {
-              await Provider.of<PreparednessProvider>(context, listen: false)
-                  .loadPreparednessData(appState.activeProfile!.id);
-            }
-          },
-          color: AppColors.primary,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-            child: Column(
+    return RefreshIndicator(
+      onRefresh: () async {
+        final appState = Provider.of<AppStateProvider>(context, listen: false);
+        if (appState.activeProfile != null) {
+          await Provider.of<PreparednessProvider>(context, listen: false)
+              .loadPreparednessData(appState.activeProfile!.id);
+        }
+      },
+      color: AppColors.primary,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.fromLTRB(18, topPadding + 10, 18, 100),
+        child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // 1. Profile Header
@@ -435,8 +434,6 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
           ),
-        ),
-      ),
-    );
+        );
   }
 }

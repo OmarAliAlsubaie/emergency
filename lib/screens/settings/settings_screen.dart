@@ -22,7 +22,7 @@ class SettingsScreen extends StatelessWidget {
         title: Text(loc.translate('settings')),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+        padding: const EdgeInsets.fromLTRB(18, 12, 18, 100),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

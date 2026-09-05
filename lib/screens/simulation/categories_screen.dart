@@ -46,7 +46,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
           : SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+              padding: const EdgeInsets.fromLTRB(18, 12, 18, 100),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

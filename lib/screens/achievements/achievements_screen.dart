@@ -205,7 +205,7 @@ class _AchievementsScreenState extends State<AchievementsScreen>
                 achProvider.isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : GridView.builder(
-                        padding: const EdgeInsets.all(18),
+                        padding: const EdgeInsets.fromLTRB(18, 18, 18, 100),
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           crossAxisSpacing: 12,
@@ -315,7 +315,7 @@ class _AchievementsScreenState extends State<AchievementsScreen>
                             ),
                           )
                         : ListView.builder(
-                            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                            padding: const EdgeInsets.fromLTRB(18, 12, 18, 100),
                             itemCount: achProvider.history.length,
                             itemBuilder: (context, index) {
                               final item = achProvider.history[index];

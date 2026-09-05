@@ -180,7 +180,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                         ),
                       )
                     : ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                        padding: const EdgeInsets.fromLTRB(18, 8, 18, 100),
                         itemCount: knowProvider.articles.length,
                         itemBuilder: (context, index) {
                           final article = knowProvider.articles[index];
