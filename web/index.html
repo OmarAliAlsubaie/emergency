@@ -178,7 +178,68 @@
             osc.start(now);
             osc.stop(now + 0.04);
           } catch(e) {}
-        }
+        },
+
+        // Category Station Themed Audio Synthesizers
+        playFireStationSound: function() { this.playSiren(); },
+        playFloodStationSound: function() {
+          try {
+            var ctx = getContext();
+            var osc = ctx.createOscillator();
+            var gain = ctx.createGain();
+            osc.type = 'sine';
+            var now = ctx.currentTime;
+            osc.frequency.setValueAtTime(180, now);
+            osc.frequency.linearRampToValueAtTime(320, now + 0.5);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.6);
+          } catch(e) {}
+        },
+        playElectricStationSound: function() { this.playZap(); },
+        playHeatStationSound: function() { this.playHeartbeat(); },
+        playTrafficStationSound: function() { this.playAlarm(); },
+        playCyberStationSound: function() {
+          try {
+            var ctx = getContext();
+            var now = ctx.currentTime;
+            [1200, 1600, 2000].forEach(function(freq, i) {
+              var osc = ctx.createOscillator();
+              var gain = ctx.createGain();
+              osc.type = 'sine';
+              osc.frequency.setValueAtTime(freq, now + i * 0.06);
+              gain.gain.setValueAtTime(0.1, now + i * 0.06);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.06 + 0.05);
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.start(now + i * 0.06);
+              osc.stop(now + i * 0.06 + 0.05);
+            });
+          } catch(e) {}
+        },
+        playDesertStationSound: function() {
+          try {
+            var ctx = getContext();
+            var osc = ctx.createOscillator();
+            var gain = ctx.createGain();
+            osc.type = 'triangle';
+            var now = ctx.currentTime;
+            osc.frequency.setValueAtTime(300, now);
+            osc.frequency.linearRampToValueAtTime(150, now + 0.7);
+            gain.gain.setValueAtTime(0.12, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.75);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.75);
+          } catch(e) {}
+        },
+        playEvacuationStationSound: function() { this.playAlarm(); },
+        playHomeStationSound: function() { this.playClick(); },
+        playKitStationSound: function() { this.playSuccess(); }
       };
     })();
   </script>

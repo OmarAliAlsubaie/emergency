@@ -41,8 +41,15 @@ String _getCategoryIllustration(String categoryId) {
   }
 }
 
-class ScenarioRunnerScreen extends StatelessWidget {
+class ScenarioRunnerScreen extends StatefulWidget {
   const ScenarioRunnerScreen({super.key});
+
+  @override
+  State<ScenarioRunnerScreen> createState() => _ScenarioRunnerScreenState();
+}
+
+class _ScenarioRunnerScreenState extends State<ScenarioRunnerScreen> {
+  int _lastPlayedStepIndex = -1;
 
   void _showFeedbackModal(BuildContext context, ScenarioOption option) {
     final loc = AppLocalizations.of(context);
@@ -243,6 +250,13 @@ class ScenarioRunnerScreen extends StatelessWidget {
 
     final scenario = simProvider.currentScenario;
     final step = simProvider.currentStep;
+
+    if (scenario != null && simProvider.currentStepIndex != _lastPlayedStepIndex) {
+      _lastPlayedStepIndex = simProvider.currentStepIndex;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        AudioService.instance.playStationSound(scenario.categoryId);
+      });
+    }
 
     if (scenario == null || step == null) {
       return Scaffold(
