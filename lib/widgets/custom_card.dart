@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/services/audio_service.dart';
 import '../core/theme/app_colors.dart';
 
 class CustomCard extends StatelessWidget {
@@ -57,7 +58,10 @@ class CustomCard extends StatelessWidget {
       return Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: onTap,
+          onTap: () {
+            AudioService.instance.playClick();
+            onTap!();
+          },
           borderRadius: BorderRadius.circular(borderRadius),
           child: content,
         ),

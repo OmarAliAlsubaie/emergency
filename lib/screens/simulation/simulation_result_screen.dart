@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/localization/app_localizations.dart';
 import '../../core/localization/language_provider.dart';
+import '../../core/services/audio_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../providers/simulation_provider.dart';
 import '../../widgets/animated_score_gauge.dart';
@@ -11,8 +12,21 @@ import '../main_navigation_screen.dart';
 import 'categories_screen.dart';
 import 'scenario_runner_screen.dart';
 
-class SimulationResultScreen extends StatelessWidget {
+class SimulationResultScreen extends StatefulWidget {
   const SimulationResultScreen({super.key});
+
+  @override
+  State<SimulationResultScreen> createState() => _SimulationResultScreenState();
+}
+
+class _SimulationResultScreenState extends State<SimulationResultScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AudioService.instance.playLevelUpCelebration();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

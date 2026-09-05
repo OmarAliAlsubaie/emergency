@@ -15,6 +15,7 @@ class AudioService {
   void playClick() {
     if (_isMuted) return;
     try {
+      HapticFeedback.selectionClick();
       SystemSound.play(SystemSoundType.click);
     } catch (e) {
       debugPrint('Audio click error: $e');
@@ -24,7 +25,7 @@ class AudioService {
   void playSuccess() {
     if (_isMuted) return;
     try {
-      HapticFeedback.lightImpact();
+      HapticFeedback.mediumImpact();
       SystemSound.play(SystemSoundType.click);
     } catch (e) {
       debugPrint('Audio success error: $e');
@@ -43,7 +44,7 @@ class AudioService {
   void playTimerTick() {
     if (_isMuted) return;
     try {
-      HapticFeedback.selectionClick();
+      HapticFeedback.lightImpact();
     } catch (e) {
       debugPrint('Audio timer tick error: $e');
     }
@@ -53,6 +54,7 @@ class AudioService {
     if (_isMuted) return;
     try {
       HapticFeedback.vibrate();
+      SystemSound.play(SystemSoundType.alert);
     } catch (e) {
       debugPrint('Audio siren error: $e');
     }
@@ -61,9 +63,11 @@ class AudioService {
   void playLevelUpCelebration() {
     if (_isMuted) return;
     try {
-      HapticFeedback.mediumImpact();
+      HapticFeedback.heavyImpact();
+      SystemSound.play(SystemSoundType.click);
     } catch (e) {
       debugPrint('Audio celebration error: $e');
     }
   }
 }
+

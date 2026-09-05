@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/localization/app_localizations.dart';
 import '../../core/localization/language_provider.dart';
+import '../../core/services/audio_service.dart';
 import '../../core/theme/app_colors.dart';
 import '../../models/scenario_option.dart';
 import '../../providers/app_state_provider.dart';
@@ -51,6 +52,12 @@ class ScenarioRunnerScreen extends StatelessWidget {
     final langProvider = Provider.of<LanguageProvider>(context, listen: false);
 
     final isSafe = option.isSafe;
+    if (isSafe) {
+      AudioService.instance.playSuccess();
+    } else {
+      AudioService.instance.playError();
+    }
+
     final isLastStep = (simProvider.currentStepIndex + 1) >= simProvider.totalSteps;
 
     showModalBottomSheet(
@@ -514,6 +521,7 @@ class ScenarioRunnerScreen extends StatelessWidget {
                           margin: const EdgeInsets.only(bottom: 12),
                           child: CustomCard(
                             onTap: () {
+                              AudioService.instance.playClick();
                               simProvider.selectOption(option);
                               _showFeedbackModal(context, option);
                             },
