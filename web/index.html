@@ -46,46 +46,98 @@
         return audioCtx;
       }
 
-      // Global User Gesture Unlocker for Chrome / Safari / Edge Autoplay Compliance
-      function unlockAudio() {
-        try {
-          var ctx = getContext();
-          if (ctx && ctx.state === 'suspended') {
-            ctx.resume();
-          }
-        } catch(e) {}
-      }
-
-      if (typeof window !== 'undefined') {
-        ['click', 'pointerdown', 'touchstart', 'touchend', 'mousedown', 'keydown'].forEach(function(evt) {
-          window.addEventListener(evt, unlockAudio, { passive: true });
-        });
-      }
-
       return {
-        unlockAudio: unlockAudio,
-        playSiren: function() {},
-        playAlarm: function() {},
-        playZap: function() {},
-        playHeartbeat: function() {},
+        playSiren: function() {
+          try {
+            var ctx = getContext();
+            var osc = ctx.createOscillator();
+            var gain = ctx.createGain();
+            osc.type = 'sawtooth';
+            var now = ctx.currentTime;
+            osc.frequency.setValueAtTime(600, now);
+            osc.frequency.linearRampToValueAtTime(1200, now + 0.4);
+            osc.frequency.linearRampToValueAtTime(600, now + 0.8);
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.85);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.85);
+          } catch(e) {}
+        },
 
-        // Organic Natural UI Sound Effects (0% Music, 0% Ringtones)
+        playAlarm: function() {
+          try {
+            var ctx = getContext();
+            var now = ctx.currentTime;
+            [0, 0.15, 0.3].forEach(function(delay) {
+              var osc = ctx.createOscillator();
+              var gain = ctx.createGain();
+              osc.type = 'square';
+              osc.frequency.setValueAtTime(880, now + delay);
+              gain.gain.setValueAtTime(0.2, now + delay);
+              gain.gain.exponentialRampToValueAtTime(0.01, now + delay + 0.1);
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.start(now + delay);
+              osc.stop(now + delay + 0.1);
+            });
+          } catch(e) {}
+        },
+
+        playZap: function() {
+          try {
+            var ctx = getContext();
+            var osc = ctx.createOscillator();
+            var gain = ctx.createGain();
+            osc.type = 'sawtooth';
+            var now = ctx.currentTime;
+            osc.frequency.setValueAtTime(1500, now);
+            osc.frequency.exponentialRampToValueAtTime(80, now + 0.25);
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.25);
+          } catch(e) {}
+        },
+
+        playHeartbeat: function() {
+          try {
+            var ctx = getContext();
+            var now = ctx.currentTime;
+            [0, 0.18].forEach(function(delay, i) {
+              var osc = ctx.createOscillator();
+              var gain = ctx.createGain();
+              osc.type = 'sine';
+              osc.frequency.setValueAtTime(i === 0 ? 70 : 55, now + delay);
+              gain.gain.setValueAtTime(0.4, now + delay);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.12);
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.start(now + delay);
+              osc.stop(now + delay + 0.12);
+            });
+          } catch(e) {}
+        },
+
         playSuccess: function() {
           try {
             var ctx = getContext();
             var now = ctx.currentTime;
-            [0, 0.05].forEach(function(delay) {
+            var notes = [523.25, 659.25, 783.99, 1046.50];
+            notes.forEach(function(freq, i) {
               var osc = ctx.createOscillator();
               var gain = ctx.createGain();
-              osc.type = 'sine';
-              osc.frequency.setValueAtTime(520, now + delay);
-              osc.frequency.exponentialRampToValueAtTime(840, now + delay + 0.04);
-              gain.gain.setValueAtTime(0.18, now + delay);
-              gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.04);
+              osc.type = 'triangle';
+              osc.frequency.setValueAtTime(freq, now + i * 0.08);
+              gain.gain.setValueAtTime(0.25, now + i * 0.08);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.3);
               osc.connect(gain);
               gain.connect(ctx.destination);
-              osc.start(now + delay);
-              osc.stop(now + delay + 0.04);
+              osc.start(now + i * 0.08);
+              osc.stop(now + i * 0.08 + 0.3);
             });
           } catch(e) {}
         },
@@ -94,130 +146,51 @@
           try {
             var ctx = getContext();
             var now = ctx.currentTime;
-            var osc = ctx.createOscillator();
-            var gain = ctx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(180, now);
-            osc.frequency.exponentialRampToValueAtTime(90, now + 0.08);
-            gain.gain.setValueAtTime(0.22, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start(now);
-            osc.stop(now + 0.08);
+            var notes = [440, 311.13];
+            notes.forEach(function(freq, i) {
+              var osc = ctx.createOscillator();
+              var gain = ctx.createGain();
+              osc.type = 'sawtooth';
+              osc.frequency.setValueAtTime(freq, now + i * 0.12);
+              gain.gain.setValueAtTime(0.25, now + i * 0.12);
+              gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.12 + 0.25);
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.start(now + i * 0.12);
+              osc.stop(now + i * 0.12 + 0.25);
+            });
           } catch(e) {}
         },
 
         playClick: function() {
           try {
             var ctx = getContext();
-            var now = ctx.currentTime;
             var osc = ctx.createOscillator();
             var gain = ctx.createGain();
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(600, now);
-            osc.frequency.exponentialRampToValueAtTime(250, now + 0.02);
-            gain.gain.setValueAtTime(0.12, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.02);
+            var now = ctx.currentTime;
+            osc.frequency.setValueAtTime(1000, now);
+            osc.frequency.exponentialRampToValueAtTime(200, now + 0.04);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.04);
             osc.connect(gain);
             gain.connect(ctx.destination);
             osc.start(now);
-            osc.stop(now + 0.02);
+            osc.stop(now + 0.04);
           } catch(e) {}
         },
 
-        // =========================================================================
-        // REAL HIGH-QUALITY AUDIO MP3 PLAYERS FOR ALL 10 EMERGENCY CATEGORIES
-        // =========================================================================
-        stopStationAmbiance: function() {
-          if (window._activeStationNodes) {
-            window._activeStationNodes.forEach(function(node) {
-              try { node.stop(); node.disconnect(); } catch(e){}
-            });
-          }
-          window._activeStationNodes = [];
-
-          if (window._activeAudioPlayers) {
-            window._activeAudioPlayers.forEach(function(audio) {
-              try {
-                audio.pause();
-                audio.currentTime = 0;
-              } catch(e){}
-            });
-          }
-          window._activeAudioPlayers = [];
-        },
-
-        _playRealAudio: function(filename, volume) {
-          this.unlockAudio();
-          this.stopStationAmbiance();
-          try {
-            var url = 'audio/' + filename;
-            var audio = new Audio(url);
-            audio.loop = true;
-            audio.volume = (volume !== undefined) ? volume : 0.40;
-            var playPromise = audio.play();
-            if (playPromise !== undefined) {
-              playPromise.catch(function(error) {
-                console.log('Audio playback handling:', error);
-              });
-            }
-            if (!window._activeAudioPlayers) window._activeAudioPlayers = [];
-            window._activeAudioPlayers.push(audio);
-          } catch(e) {
-            console.log('Real audio error:', e);
-          }
-        },
-
-        // 1. Fire: Real Fireplace Wood Crackle Recording MP3
-        playFireStationSound: function() {
-          this._playRealAudio('fire.mp3', 0.45);
-        },
-
-        // 2. Flood: Real Soothing Flowing River & Water Stream MP3
-        playFloodStationSound: function() {
-          this._playRealAudio('flood.mp3', 0.40);
-        },
-
-        // 3. Electric: Real Subtle Room & Electrical Atmosphere MP3
-        playElectricStationSound: function() {
-          this._playRealAudio('electric.mp3', 0.35);
-        },
-
-        // 4. Heat: Real Desert Wind Breeze Ambient MP3
-        playHeatStationSound: function() {
-          this._playRealAudio('heat.mp3', 0.40);
-        },
-
-        // 5. Traffic: Real Smooth City & Highway Rain Ambient MP3
-        playTrafficStationSound: function() {
-          this._playRealAudio('traffic.mp3', 0.40);
-        },
-
-        // 6. Cyber: Real Relaxing Sci-Fi Ambient Synth Space MP3
-        playCyberStationSound: function() {
-          this._playRealAudio('cyber.mp3', 0.35);
-        },
-
-        // 7. Desert: Real Desert Sandstorm Wind MP3
-        playDesertStationSound: function() {
-          this._playRealAudio('desert.mp3', 0.45);
-        },
-
-        // 8. Evacuation: Real Calm Hallway Echo Ambient MP3
-        playEvacuationStationSound: function() {
-          this._playRealAudio('evacuation.mp3', 0.38);
-        },
-
-        // 9. Home: Real Cozy Indoor Rain & Hearth MP3
-        playHomeStationSound: function() {
-          this._playRealAudio('home.mp3', 0.40);
-        },
-
-        // 10. Emergency Kit: Real Celestial Meditation Crystal Bells MP3
-        playKitStationSound: function() {
-          this._playRealAudio('kit.mp3', 0.35);
-        }
+        stopStationAmbiance: function() {},
+        playFireStationSound: function() {},
+        playFloodStationSound: function() {},
+        playElectricStationSound: function() {},
+        playHeatStationSound: function() {},
+        playTrafficStationSound: function() {},
+        playCyberStationSound: function() {},
+        playDesertStationSound: function() {},
+        playEvacuationStationSound: function() {},
+        playHomeStationSound: function() {},
+        playKitStationSound: function() {}
       };
     })();
   </script>

@@ -24,21 +24,11 @@ class AudioService {
     }
   }
 
-  void _callWebSynthWithArg(String methodName, int arg) {
-    if (_isMuted) return;
-    if (kIsWeb) {
-      try {
-        js.context.callMethod('eval', ['if (window.EmergencyAudioSynth) window.EmergencyAudioSynth.$methodName($arg);']);
-      } catch (e) {
-        debugPrint('WebSynth error: $e');
-      }
-    }
-  }
-
   void playClick() {
     if (_isMuted) return;
     try {
       HapticFeedback.selectionClick();
+      SystemSound.play(SystemSoundType.click);
       _callWebSynth('playClick');
     } catch (e) {
       debugPrint('Audio click error: $e');
@@ -49,6 +39,7 @@ class AudioService {
     if (_isMuted) return;
     try {
       HapticFeedback.mediumImpact();
+      SystemSound.play(SystemSoundType.click);
       _callWebSynth('playSuccess');
     } catch (e) {
       debugPrint('Audio success error: $e');
@@ -69,6 +60,7 @@ class AudioService {
     if (_isMuted) return;
     try {
       HapticFeedback.lightImpact();
+      _callWebSynth('playClick');
     } catch (e) {
       debugPrint('Audio timer tick error: $e');
     }
@@ -78,6 +70,8 @@ class AudioService {
     if (_isMuted) return;
     try {
       HapticFeedback.vibrate();
+      SystemSound.play(SystemSoundType.alert);
+      _callWebSynth('playSiren');
     } catch (e) {
       debugPrint('Audio siren error: $e');
     }
@@ -87,6 +81,7 @@ class AudioService {
     if (_isMuted) return;
     try {
       HapticFeedback.heavyImpact();
+      _callWebSynth('playZap');
     } catch (e) {
       debugPrint('Audio zap error: $e');
     }
@@ -96,6 +91,7 @@ class AudioService {
     if (_isMuted) return;
     try {
       HapticFeedback.mediumImpact();
+      _callWebSynth('playHeartbeat');
     } catch (e) {
       debugPrint('Audio heartbeat error: $e');
     }
@@ -105,57 +101,13 @@ class AudioService {
     if (_isMuted) return;
     try {
       HapticFeedback.heavyImpact();
+      SystemSound.play(SystemSoundType.click);
+      _callWebSynth('playSuccess');
     } catch (e) {
       debugPrint('Audio celebration error: $e');
     }
   }
 
-  void playStationSound(String categoryId, {int stepIndex = 0}) {
-    if (_isMuted) return;
-    try {
-      HapticFeedback.lightImpact();
-      switch (categoryId) {
-        case 'fire':
-          _callWebSynthWithArg('playFireStationSound', stepIndex);
-          break;
-        case 'electric':
-          _callWebSynthWithArg('playElectricStationSound', stepIndex);
-          break;
-        case 'heat':
-          _callWebSynthWithArg('playHeatStationSound', stepIndex);
-          break;
-        case 'flood':
-          _callWebSynthWithArg('playFloodStationSound', stepIndex);
-          break;
-        case 'traffic':
-          _callWebSynthWithArg('playTrafficStationSound', stepIndex);
-          break;
-        case 'cyber':
-        case 'cyber_safety':
-          _callWebSynthWithArg('playCyberStationSound', stepIndex);
-          break;
-        case 'desert':
-        case 'desert_safety':
-          _callWebSynthWithArg('playDesertStationSound', stepIndex);
-          break;
-        case 'evacuation':
-          _callWebSynthWithArg('playEvacuationStationSound', stepIndex);
-          break;
-        case 'home':
-          _callWebSynthWithArg('playHomeStationSound', stepIndex);
-          break;
-        case 'emergency_kit':
-        default:
-          _callWebSynthWithArg('playKitStationSound', stepIndex);
-          break;
-      }
-    } catch (e) {
-      debugPrint('Audio station sound error: $e');
-    }
-  }
-
-  void stopStationSound() {
-    _callWebSynth('stopStationAmbiance');
   }
 }
 

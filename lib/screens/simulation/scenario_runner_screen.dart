@@ -41,15 +41,8 @@ String _getCategoryIllustration(String categoryId) {
   }
 }
 
-class ScenarioRunnerScreen extends StatefulWidget {
+class ScenarioRunnerScreen extends StatelessWidget {
   const ScenarioRunnerScreen({super.key});
-
-  @override
-  State<ScenarioRunnerScreen> createState() => _ScenarioRunnerScreenState();
-}
-
-class _ScenarioRunnerScreenState extends State<ScenarioRunnerScreen> {
-  int _lastPlayedStepIndex = -1;
 
   void _showFeedbackModal(BuildContext context, ScenarioOption option) {
     final loc = AppLocalizations.of(context);
@@ -250,13 +243,6 @@ class _ScenarioRunnerScreenState extends State<ScenarioRunnerScreen> {
 
     final scenario = simProvider.currentScenario;
     final step = simProvider.currentStep;
-
-    if (scenario != null && simProvider.currentStepIndex != _lastPlayedStepIndex) {
-      _lastPlayedStepIndex = simProvider.currentStepIndex;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        AudioService.instance.playStationSound(scenario.categoryId, stepIndex: simProvider.currentStepIndex);
-      });
-    }
 
     if (scenario == null || step == null) {
       return Scaffold(
@@ -568,11 +554,5 @@ class _ScenarioRunnerScreenState extends State<ScenarioRunnerScreen> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    AudioService.instance.stopStationSound();
-    super.dispose();
   }
 }
