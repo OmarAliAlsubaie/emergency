@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_web_libraries_in_flutter
 // Web implementation for triggering Web Audio Synthesizer in index.html
 import 'dart:js' as js;
 
