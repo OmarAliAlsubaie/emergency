@@ -7,12 +7,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
-import '../../core/constants/nano_banana_assets.dart';
 import '../../core/localization/app_localizations.dart';
-import '../../core/theme/app_colors.dart';
 import '../../providers/app_state_provider.dart';
 import '../../providers/preparedness_provider.dart';
-import '../../widgets/nano_image_widget.dart';
 import '../main_navigation_screen.dart';
 import '../home/onboarding_profile_screen.dart';
 
